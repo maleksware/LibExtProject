@@ -9,6 +9,9 @@
 #TODO: Recreate MyBooks and Search structure
 #TODO: Repaint arrows
 #TODO: GiveAndTake options
+#TODO: Recreate Login screen
+#TODO: Interfsce Update
+
 
 # Kivy imports
 
