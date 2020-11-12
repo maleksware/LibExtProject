@@ -1,0 +1,838 @@
+<Annot>
+    name: "Annot"
+    id: "Annot"
+    Label:
+        text: "Annot"
+
+<Loading>
+    on_enter: self.toLogin()
+    name: "Loading"
+    id: "Loading"
+    Label:
+        text: "Loading"
+
+<MyBooks>
+    bookLayout: bookLayout
+    name: "MyBooks"
+    on_enter:
+        root.stack()
+        root.my_book(self)
+    AnchorLayout:
+        anchor_x: 'right'
+        anchor_y: 'top'
+        GridLayout:
+            cols: 2
+            MDLabel:
+                text: 'My Books'
+                size_hint: (0.1, None)
+                font_size: 30
+                halign:'center'
+    GridLayout:
+        cols: 1
+        Widget:
+            size_hint: 1, 0.2
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            GridLayout:
+                spacing: 10
+                id: bookLayout
+                cols: 1
+                row_force_default: True
+                row_default_height: 30
+                size_hint_y: None
+    BoxLayout:
+        Button:
+            size_hint: None,None
+            size: 90, 85
+            on_press: root.manager.current = "MyBooks"
+            background_normal: "myBooks.png"
+        Button:
+            size_hint: None,None
+            size: 90, 85
+            on_press: root.manager.current = "GiveAndTake"
+            background_normal: "arrowsBook.png"
+        Button:
+            size_hint: None,None
+            size: 90, 85
+            on_press: root.manager.current = "Add"
+            background_normal: "add.png"
+        Button:
+            size_hint: None,None
+            size: 90, 85
+            on_press: root.manager.current = "Search"
+            background_normal: "search.png"
+        Button:
+            size_hint: None,None
+            size: 90, 85
+            on_press: root.manager.current = "Set"
+            background_normal: "settingsSign.png"
+
+<GiveAndTake>
+    on_enter:
+        root.clearInput()
+        root.stack()
+    name: "GiveAndTake"
+    isbn:isbn
+    code:code
+    GridLayout:
+        cols:1
+        spacing:3
+        MDLabel:
+            text: "Give and take"
+            size_hint: 1, None
+            font_size:30
+            halign:'center'
+        MDLabel:
+            text: "If you want to take the book, \nleave the 'Station' section blank"
+            size_hint: 1, None
+            halign:'center'
+        MDTextField:
+            id: isbn
+            hint_text: "ISBN or ID"
+            multiline: False
+            size_hint: 1, None
+        MDTextField:
+            id: code
+            hint_text: "Station"
+            size_hint: 1, None
+            multiline: False
+        MDRoundFlatButton:
+            text:'Ready'
+            size_hint: 1, None
+            on_release: root.give()
+
+
+
+    BoxLayout:
+        Button:
+            size_hint: None,None
+            size: 90,85
+            on_press: root.manager.current = "MyBooks"
+            background_normal: "myBooks.png"
+        Button:
+            size_hint: None,None
+            size: 90,85
+            on_press: root.manager.current = "GiveAndTake"
+            background_normal: "arrowsBook.png"
+        Button:
+            size_hint: None,None
+            size: 90,85
+            on_press: root.manager.current = "Add"
+            background_normal: "add.png"
+        Button:
+            size_hint: None,None
+            size: 90,85
+            on_press: root.manager.current = "Search"
+            background_normal: "search.png"
+        Button:
+            size_hint: None,None
+            size: 90,85
+            on_press: root.manager.current = "Set"
+            background_normal: "settingsSign.png"
+
+<Add>
+    on_enter:
+        root.stack()
+    name: "Add"
+    isbn:isbn
+    title:title
+    author:author
+    description:description
+    tags:tags
+    kod:kod
+    GridLayout:
+        cols:1
+        MDLabel:
+            text:"Add Book"
+            size_hint:0.4,None
+            font_size:30
+            halign:'center'
+        TextInput:
+            id:isbn
+            hint_text: "Book ISBN"
+            multiline: False
+            size_hint: 1, 0.3
+        TextInput:
+            id:title
+            hint_text: "Book title"
+            multiline: False
+            size_hint: 1, 0.3
+        TextInput:
+            id:author
+            hint_text: "Author"
+            multiline: False
+            size_hint: 1, 0.3
+        TextInput:
+            id:description
+            hint_text: "Short description"
+            multiline: False
+        TextInput:
+            id:tags
+            multiline: False
+            hint_text: "Tags separated by spaces"
+            size_hint: 1, 0.3
+        TextInput:
+            id:kod
+            hint_text: "Station code"
+            multiline: False
+            size_hint: 1, 0.3
+        MDRaisedButton:
+            text: "Add this book to the list"
+            size_hint:0.4,1
+            on_release: root.addBook(self.text)
+
+
+    BoxLayout:
+        Button:
+            size_hint: None,None
+            size: 90,85
+            on_press: root.manager.current = "MyBooks"
+            background_normal: "myBooks.png"
+        Button:
+            size_hint: None,None
+            size: 90,85
+            on_press: root.manager.current = "GiveAndTake"
+            background_normal: "arrowsBook.png"
+        Button:
+            size_hint: None,None
+            size: 90,85
+            on_press: root.manager.current = "Add"
+            background_normal: "add.png"
+        Button:
+            size_hint: None,None
+            size: 90,85
+            on_press: root.manager.current = "Search"
+            background_normal: "search.png"
+        Button:
+            size_hint: None,None
+            size: 90,85
+            on_press: root.manager.current = "Set"
+            background_normal: "settingsSign.png"
+
+<Search>
+    bookLayout: bookLayout
+    searchTextInput: searchTextInput
+    on_enter:
+        root.stack()
+    name: "Search"
+    GridLayout:
+        cols: 1
+        rows: 3
+        MDLabel:
+            text: "Search"
+            font_size: 30
+            size_hint: (0.35, None)
+            halign:'center'
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint: (1, 0.1)
+            pos_hint: {'center_y': 0.9, 'center_x': 0.5}
+            MDTextFieldRect:
+                id: searchTextInput
+                size_hint: (0.6, 0.6)
+                font_size: 14
+                hint_text: "What are you looking for?"
+                multiline: False
+                on_text_validate: root.search()
+            MDRaisedButton:
+                text: "Ok"
+                font_size: 20
+                size_hint: (0.1, 0.5)
+                pos_hint: {'center_y': 0.3}
+                on_release: root.search()
+        ScrollView:
+            do_scroll_y: True
+            do_scroll_x: False
+            GridLayout:
+                id: bookLayout
+                cols: 1
+                row_force_default: True
+                row_default_height: 30
+                size_hint_y: None
+                Widget:
+
+    BoxLayout:
+        Button:
+            size_hint: None,None
+            size: 90,85
+            on_press: root.manager.current = "MyBooks"
+            background_normal: "myBooks.png"
+        Button:
+            size_hint: None,None
+            size: 90,85
+            on_press: root.manager.current = "GiveAndTake"
+            background_normal: "arrowsBook.png"
+        Button:
+            size_hint: None,None
+            size: 90,85
+            on_press: root.manager.current = "Add"
+            background_normal: "add.png"
+        Button:
+            size_hint: None,None
+            size: 90,85
+            on_press: root.manager.current = "Search"
+            background_normal: "search.png"
+        Button:
+            size_hint: None,None
+            size: 90,85
+            on_press: root.manager.current = "Set"
+            background_normal: "settingsSign.png"
+
+<Set>
+    on_enter:
+        root.stack()
+    name: "Set"
+    GridLayout:
+        cols: 1
+        spacing:3
+        MDLabel:
+            text:'Settings'
+            font_size:35
+            size_hint:(0.4,None)
+            halign:'center'
+        Button:
+            text:'Profile'
+            background_color: [0.9, 0.9, 0.9, 1]
+            color: [0, 0, 0, 1]
+            background_normal: ""
+            size_hint:(0.4,None)
+            on_press: root.manager.current = "Profile"
+        Button:
+            text:'Message about problem'
+            background_color: [0.9, 0.9, 0.9, 1]
+            color: [0, 0, 0, 1]
+            background_normal: ""
+            size_hint:(0.4,None)
+            on_press:root.manager.current = 'AboutProblem'
+        Button:
+            text:'Reference'
+            background_color: [0.9, 0.9, 0.9, 1]
+            color: [0, 0, 0, 1]
+            background_normal: ""
+            size_hint:(0.4,None)
+            on_press:root.manager.current = 'Spravka'
+        Button:
+            text:'About attachment'
+            background_color: [0.9, 0.9, 0.9, 1]
+            color: [0, 0, 0, 1]
+            background_normal: ""
+            size_hint:(0.4,None)
+            on_press:root.manager.current = 'AboutAttachment'
+        Button:
+            text:'Information'
+            background_color: [0.9, 0.9, 0.9, 1]
+            color: [0, 0, 0, 1]
+            background_normal: ""
+            size_hint:(0.4,None)
+            on_press:root.manager.current = 'Information'
+        Button:
+            text:'About developers'
+            background_color: [0.9, 0.9, 0.9, 1]
+            color: [0, 0, 0, 1]
+            size_hint:(0.4,None)
+            background_normal: ""
+            on_press:root.manager.current = 'AboutDevelopers'
+    BoxLayout:
+        Button:
+            size_hint: None,None
+            size: 90,85
+            on_press: root.manager.current = "MyBooks"
+            background_normal: "myBooks.png"
+        Button:
+            size_hint: None,None
+            size: 90,85
+            on_press: root.manager.current = "GiveAndTake"
+            background_normal: "arrowsBook.png"
+        Button:
+            size_hint: None,None
+            size: 90,85
+            on_press: root.manager.current = "Add"
+            background_normal: "add.png"
+        Button:
+            size_hint: None,None
+            size: 90,85
+            on_press: root.manager.current = "Search"
+            background_normal: "search.png"
+        Button:
+            size_hint: None,None
+            size: 90,85
+            on_press: root.manager.current = "Set"
+            background_normal: "settingsSign.png"
+
+<Profile>
+    nameLabel: nameLabel
+    surnameLabel: surnameLabel
+    rank: rank
+    on_enter:
+        root.stack()
+        root.initProfile()
+    name: "Profile"
+    AnchorLayout:
+        anchor_x:'left'
+        anchor_y:'top'
+        Button:
+            size_hint:None,None
+            font_size:30
+            background_normal:'back.png'
+            on_press: root.back()
+    GridLayout:
+
+        cols: 1
+        MDLabel:
+            text: "Profile"
+            font_size: 35
+            size_hint: 0.2, None
+            halign:'center'
+        GridLayout:
+            size_hint: 0.1, None
+            cols: 2
+            rows: 1
+            padding: 30
+            Image:
+                id: rank
+                source: "profile.png"
+                allow_stretch: True
+                size_hint: 0.6, None
+
+            BoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    id: nameLabel
+                    font_size: 20
+                    halign: "center"
+                MDLabel:
+                    id: surnameLabel
+                    font_size: 20
+                    halign: "center"
+        Widget:
+            size_hint: 0.1, None
+
+
+
+        Button:
+            size_hint: 0.4, None
+            background_color: [255, 255, 255, 0]
+            color: [0, 0, 0, 1]
+            text: "Edit profile"
+            on_press: root.editProfile()
+        Button:
+            size_hint: 0.4, None
+            text: "Delete profile"
+            background_color: [255, 255, 255, 0]
+            color: [0, 0, 0, 1]
+
+            on_press: root.deleteProfile()
+        Button:
+            size_hint: 0.4, None
+            text: "Logout"
+            background_color: [255, 255, 255, 0]
+            color: [0, 0, 0, 1]
+
+            on_press: root.logout()
+
+<UpdateProfile>
+    on_enter:
+        root.stack()
+        root.prepareInputs()
+    name:'UpdateProfile'
+    nam:nam
+    mail:mail
+    familia:familia
+    class1:class1
+    GridLayout:
+        cols:1
+        MDLabel:
+            text:'Update Profile'
+            size_hint: 0.4,None
+            font_size:35
+            halign:'center'
+        MDLabel:
+            text:'----------------------------------------------------------------------------------------------------------------'
+            size_hint: 0.4,None
+        MDTextField:
+            id:nam
+            size_hint: 0.4,None
+            font_size:25
+            hint_text:'Name'
+        MDTextField:
+            id:familia
+            size_hint: 0.4,None
+            font_size:25
+            hint_text:'Familia'
+        MDTextField:
+            id:class1
+            size_hint: 0.4,None
+            font_size:25
+            hint_text:'Class(Enter a number from 5-11)'
+        MDTextField:
+            id:mail
+            size_hint: 0.4,None
+            font_size:25
+            hint_text:'E-mail'
+            icon_right:'email'
+    AnchorLayout:
+        anchor_x:'left'
+        anchor_y:'top'
+        Button:
+            size_hint:None,None
+            font_size:30
+            background_normal:'back.png'
+            on_press: root.back()
+    BoxLayout:
+        MDRaisedButton:
+            size_hint:0.4,None
+            text:'Save'
+            on_press:
+                root.click1(self.text)
+
+<AboutProblem>
+    on_enter:
+        root.stack()
+    name:'AboutProblem'
+    feedback:feedback
+    AnchorLayout:
+        anchor_x:'left'
+        anchor_y:'top'
+        Button:
+            size_hint:None,None
+            font_size:30
+            background_normal:'back.png'
+            on_press:root.back()
+    GridLayout:
+        cols:1
+        MDLabel:
+            text:'About the problem'
+            size_hint:0.4,None
+            font_size:30
+            halign:'center'
+        MDLabel:
+            text:'--------------------------------------------------------'
+            size_hint:0.4,None
+            font_size:30
+        MDTextFieldRect:
+            id:feedback
+            size_hint:0.4,None
+            font_size:15
+            hint_text:'Descripe the problem'
+        MDRaisedButton:
+            text:'Send'
+            size_hint:0.4,None
+            size:200,100
+            on_press:
+                root.ClickOk(self.text)
+        Image:
+            source:'otzyvi.png'
+            size_hint:0.5,0.5
+
+<Spravka>
+    on_enter:
+        root.stack()
+    name:'Spravka'
+    AnchorLayout:
+        anchor_x:'left'
+        anchor_y:'top'
+        Button:
+            size_hint:None,None
+            font_size:30
+            background_normal:'back.png'
+            on_press:root.back()
+    GridLayout:
+        cols:1
+        MDLabel:
+            text:'Reference'
+            size_hint:0.4,None
+            font_size:30
+            halign:'center'
+        Label:
+            size_hint:0.4,None
+            font_size:30
+
+<AboutAttachment>
+    on_enter:
+        root.stack()
+    name:'AboutAttachment'
+    AnchorLayout:
+        anchor_x:'left'
+        anchor_y:'top'
+        Button:
+            size_hint:None,None
+            font_size:30
+            background_normal:'back.png'
+            on_press:root.back()
+    GridLayout:
+        cols:1
+        MDLabel:
+            text:'About Attachment'
+            size_hint:0.4,None
+            font_size:30
+            halign:'center'
+        Label:
+            size_hint:0.4,None
+            font_size:30
+
+<Information>
+    newsLayout: newsLayout
+    on_enter:
+        root.stack()
+        root.showNews()
+    name:'Information'
+    AnchorLayout:
+        anchor_x:'left'
+        anchor_y:'top'
+        Button:
+            size_hint:None,None
+            font_size:30
+            background_normal:'back.png'
+            on_press:root.back()
+    GridLayout:
+
+        cols:1
+        MDLabel:
+            text: 'Information'
+            size_hint: 0.4, None
+            font_size: 30
+            halign:'center'
+        MDLabel:
+            size_hint: 0.2, None
+            text: 'Last news:'
+            halign: 'left'
+            font_size: 20
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            GridLayout:
+                size_hint_y: None
+                id: newsLayout
+                cols:1
+                row_force_default: True
+                row_default_height: 90
+        Button:
+            background_color: [0.95, 0.95, 0.95, 1]
+            color: [0, 0, 0, 1]
+            background_normal: ""
+            text: "Offer news"
+            on_press: root.offer()
+            size_hint: 0.3, None
+
+<AboutDevelopers>
+    on_enter:
+        root.stack()
+    name:'AboutDevelopers'
+    AnchorLayout:
+        anchor_x:'left'
+        anchor_y:'top'
+        Button:
+            size_hint:None,None
+            font_size:30
+            background_normal:'back.png'
+            on_press:root.back()
+    GridLayout:
+        cols:1
+        MDLabel:
+            text:'About Developers'
+            size_hint:0.4,None
+            font_size:30
+            halign:'center'
+        MDLabel:
+            text:'----------------------------------------------------------------------------------------------------------------'
+            size_hint:0.4,None
+        MDLabel:
+            text:'The names of the developers:\nMaximov Alexander,\nBobrovskaya Varvara,\nKurtin Efim\nMoscow,2020 year.'
+            size_hint:0.4,None
+            font_size:25
+            halign:'center'
+
+<Login>
+    mail:mail
+    on_enter:
+        root.clearEmail()
+        root.stack()
+        root.mail.text = ""
+        root.checkToLoading()
+
+    GridLayout:
+        cols:1
+        MDLabel:
+            text:'Bookcrossing 1505'
+            font_style:'H4'
+            halign:'center'
+            size_hint:0.4,None
+        Image:
+            source:'book.png'
+            allow_stretch:False
+            size_hint:0.4,0.8
+        MDTextField:
+            id:mail
+            multiline: False
+            hint_text:'Write your email'
+            size_hint:0.4,None
+            font_size:25
+            icon_right:'email'
+            on_text_validate: root.switch(self.text)
+        MDRoundFlatButton:
+            text:'Sign in'
+            size_hint:0.4,0.1
+            on_release:
+                root.switch(self.text)
+        MDRoundFlatButton:
+            text:'Sign up'
+            background_color:0,1,0,1
+            text_color:0,1,0,1
+            size_hint:0.4,0.1
+            on_release:root.manager.current = ('SignUp')
+
+<SignUp>
+    on_enter:
+        root.stack()
+    name:'SignUp'
+    mail:mail
+    familia:familia
+    class1:class1
+    nam:nam
+    GridLayout:
+        cols:1
+        MDLabel:
+            text:'Sign up'
+            size_hint: 0.4,None
+            font_style:'H4'
+            halign:'center'
+        MDLabel:
+            text:'----------------------------------------------------------------------------------------------------------------'
+            size_hint: 0.4,0
+            halign:'center'
+
+        MDTextField:
+            id:nam
+            size_hint: 0.4,None
+            font_size:25
+            hint_text:'Name'
+        MDTextField:
+            id:familia
+            size_hint: 0.4,None
+            font_size:25
+            hint_text:'Familia'
+        MDTextField:
+            id:class1
+            size_hint: 0.4,None
+            font_size:25
+            hint_text:'Class(Enter a number from 5-11)'
+        MDTextField:
+            id:mail
+            size_hint: 0.4,None
+            font_size:25
+            hint_text:'E-mail'
+            icon_right:'email'
+
+        MDRaisedButton:
+            text:'Sign up'
+            on_release:
+                root.click(self.text)
+            size_hint: 0.4,None
+
+
+    AnchorLayout:
+        anchor_x:'left'
+        anchor_y:'top'
+        Button:
+            size_hint:None,None
+            font_size:30
+            background_normal:'back.png'
+            on_release:root.back()
+
+<Ok>:
+    on_enter: root.stack()
+    name:'Ok'
+    GridLayout:
+        cols:1
+        MDLabel:
+            text:'Successfully'
+            font_size:45
+            size_hint:0.4,None
+            halign:'center'
+        Image:
+            source:'okpng.png'
+            allow_stretch:False
+            size_hint:0.4,0.2
+        Label:
+            font_size:45
+            size_hint:None,0.4
+    AnchorLayout:
+        anchor_x:'left'
+        anchor_y:'top'
+        Button:
+            size_hint:None,None
+            font_size:30
+            background_normal:'back.png'
+            on_press: root.back()
+    BoxLayout:
+        size_hint_y:0.2
+        MDFlatButton:
+            text:'Go to the section "My Books"'
+            size_hint:0.4,None
+            on_press:root.manager.current = 'MyBooks'
+
+<DeleteProfile>
+    name: "DeleteProfile"
+    checkbox: checkbox
+    on_enter: root.stack()
+    AnchorLayout:
+        anchor_x:'left'
+        anchor_y:'top'
+        Button:
+            size_hint:None,None
+            font_size:30
+            background_normal:'levo.png'
+            on_press:root.back()
+    GridLayout:
+        cols:1
+        MDLabel:
+            text:'Delete Profile'
+            size_hint:0.4,None
+            font_size:30
+            halign:'center'
+        Label:
+            size_hint:0.4,None
+            font_size:30
+    BoxLayout:
+        orientation: 'vertical'
+
+        MDLabel:
+            text: "When deleting the profile, make sure you have given\n all your books to a station. Otherwise, \nthe profile will not be deleted."
+            halign:'center'
+        BoxLayout:
+            orientation: "horizontal"
+            CheckBox:
+                id:checkbox
+                size_hint: 0.3, 1
+            MDLabel:
+                text: "I am sure I want to delete my profile."
+                halign: "left"
+
+
+        MDFlatButton:
+            text: "Delete this profile"
+            on_press: root.delete()
+
+#Screen Manager
+<Screens>
+    Annot:
+    Loading:
+        name: "Loading"
+    Login:
+        name: "Login"
+    MyBooks:
+    GiveAndTake:
+    Add:
+    Search:
+    Set:
+    Profile:
+    UpdateProfile:
+    AboutProblem:
+    Spravka:
+    AboutAttachment:
+    Information:
+    AboutDevelopers:
+    Ok:
+    SignUp:
+    DeleteProfile:

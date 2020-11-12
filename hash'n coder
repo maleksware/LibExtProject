@@ -1,0 +1,5 @@
+import pyperclip
+while True:
+    isbn = input()
+    author = input()
+    pyperclip.copy(str(hash(isbn+author)))
