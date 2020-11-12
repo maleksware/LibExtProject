@@ -10,7 +10,6 @@
 #TODO: Repaint arrows
 #TODO: GiveAndTake options
 
-
 # Kivy imports
 
 import kivy
