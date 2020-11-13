@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 
 #TODO: Remove Spaghetti Code
+
+
+
+
+
 #TODO: Settings content
 #TODO: Create camera
 #TODO: Create testcases for testing
