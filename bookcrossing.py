@@ -10,8 +10,7 @@
 #TODO: Repaint arrows
 #TODO: GiveAndTake options
 #TODO: Recreate Login screen
-#TODO: Interfsce Update
-
+#TODO: Interface Update
 
 # Kivy imports
 
