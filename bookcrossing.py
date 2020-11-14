@@ -11,6 +11,10 @@
 #TODO: GiveAndTake options
 #TODO: Recreate Login screen
 #TODO: Interface Update
+#TODO: Add the option of taking books right from the modal window
+
+
+
 
 # Kivy imports
 
