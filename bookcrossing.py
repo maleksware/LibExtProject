@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #TODO: Remove Spaghetti Code
+
+
 #TODO: Settings content
 #TODO: Create camera
 #TODO: Create testcases for testing
@@ -12,7 +14,6 @@
 #TODO: Recreate Login screen
 #TODO: Interface Update
 #TODO: Add the option of taking books right from the modal window
-
 
 # Kivy imports
 
@@ -39,7 +40,9 @@ from kivy.uix.scrollview import ScrollView
 from kivymd.uix.dialog import MDDialog
 from kivy.core.window import Window
 from kivymd.uix.button import MDFlatButton
+from kivymd.toast import toast
 from kivymd.uix.label import MDLabel
+from kivymd.uix.behaviors import RectangularElevationBehavior, FocusBehavior
 import pymysql
 from re import *
 import smtplib
@@ -90,8 +93,8 @@ def cwq(string):
 def execSQL(sql, one= True, debugOutput= False):
     if debugOutput:
         print(sql)
-    connection = pymysql.connect(host = "127.0.0.1",
-                                 user = "user",
+    connection = pymysql.connect(host = "localhost",
+                                 user = "root",
                                  password = "userpass1234",
                                  db = "bookcrossing",
                                  cursorclass=pymysql.cursors.Cursor)
@@ -116,6 +119,8 @@ def modalNews(id):
     news = execSQL(request)
     bookModal = MDDialog(title= news[0], type= "custom", text= news[1], buttons= [MDFlatButton(text="OK")], size_hint= (0.7, None))
     bookModal.open()
+
+
 
 def processLongTitle(text, processTo):
     if len(text) > processTo:
@@ -477,7 +482,8 @@ class GiveAndTake(Screen):
                         execSQL('UPDATE books SET owner = "None" WHERE isbn = ' + cwq(book))
                         execSQL('UPDATE books SET station = ' + cwq(station) + ' WHERE isbn = ' + cwq(book))
                         self.clearInput()
-                        App.get_running_app().show_popup("Successfully!")
+                        
+                        toast("Successfully!")
                         return
                 else:
                     App.get_running_app().show_popup("This ISBN isn't correct")
@@ -501,7 +507,7 @@ class GiveAndTake(Screen):
                         execSQL('UPDATE books SET owner = "None" WHERE book_id = ' + cwq(str(book)))
                         execSQL('UPDATE books SET station = ' + cwq(station) + ' WHERE book_id = ' + cwq(book))
                         self.clearInput()
-                        App.get_running_app().show_popup("Successfully!")
+                        toast("Successfully!")
                         return
                 except:
                     App.get_running_app().show_popup("Your ID isn't correct")
@@ -525,7 +531,7 @@ class GiveAndTake(Screen):
     def take(self):
         book = self.isbn.text
         if book == "":
-            App.get_running_app().show_popup("You didn't write something")
+            toast("You didn't write something")
         try:
             if isISBN(book):
                 if isValid(book):
@@ -539,7 +545,7 @@ class GiveAndTake(Screen):
                                 execSQL('UPDATE books SET owner = ' + cwq(mail) +' WHERE isbn = ' + cwq(str(book)))
                                 execSQL('UPDATE books SET station = "The book was taken" WHERE isbn = ' + cwq(str(book)))
                                 self.clearInput()
-                                App.get_running_app().show_popup("Successfully!")
+                                toast("Successfully!")
                                 return
                             elif not hasThisBook(mail, book, reqType="isbn"):
                                 App.get_running_app().show_popup("This book isn't yours! \nYou can log in or sign up in settings.")
@@ -565,7 +571,7 @@ class GiveAndTake(Screen):
                             execSQL('UPDATE books SET owner = ' + cwq(mail) + ' WHERE book_id = ' + cwq(book))
                             execSQL('UPDATE books SET station = "The book was taken" WHERE book_id = ' + cwq(str(book)))
                             self.isbn.text = ''
-                            App.get_running_app().show_popup("Successfully!")
+                            toast("Successfully!")
                             return
                         elif not hasThisBook(mail, book, reqType="book_id"):
                             App.get_running_app().show_popup("This book isn't yours! \nYou can log in or sign up in settings.")
@@ -623,7 +629,7 @@ class Add(Screen):
                         reducedISBN = reduceISBN(self.isbn.text)
                         execSQL('INSERT INTO books (put_by, owner, book_id, isbn, title, author, description, tags, station) VALUES (' + cwq(mail) + ', ' + cwq("None") + ', ' + cwq(tableLength + 1) + ', ' + cwq(reducedISBN) + ', ' + cwq(self.title.text) + ', ' + cwq(self.author.text) + ', ' + cwq(self.description.text) + ', ' + cwq(tags) + ', ' + cwq(self.kod.text) + ') ')
 
-                        App.get_running_app().show_popup("Successfully!")
+                        toast("Successfully!")
                         return
                     else:
                         App.get_running_app().show_popup("This book already exists")
@@ -899,6 +905,7 @@ class DeleteProfile(Screen):
 # Widget and layout classes
 class CustomAppException(Exception):
     pass
+
 # No widget and layout classes after this line!
 
 # The Screenmanager
