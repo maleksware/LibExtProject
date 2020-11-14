@@ -14,8 +14,6 @@
 #TODO: Add the option of taking books right from the modal window
 
 
-
-
 # Kivy imports
 
 import kivy
