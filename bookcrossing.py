@@ -13,7 +13,6 @@
 #TODO: Recreate Login screen
 #TODO: Interface Update
 #TODO: Add the option of taking books right from the modal window
-#New comment from Moscow
 # Kivy imports
 
 import kivy
