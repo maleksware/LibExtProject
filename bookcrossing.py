@@ -481,6 +481,7 @@ class GiveAndTake(Screen):
                         execSQL('UPDATE books SET owner = "None" WHERE isbn = ' + cwq(book))
                         execSQL('UPDATE books SET station = ' + cwq(station) + ' WHERE isbn = ' + cwq(book))
                         self.clearInput()
+
                         toast("Successfully!")
                         return
                 else:
