@@ -13,7 +13,6 @@
 #TODO: Recreate Login screen
 #TODO: Interface Update
 #TODO: Add the option of taking books right from the modal window
-#New comment from Moscow
 # Kivy imports
 
 import kivy
@@ -93,7 +92,7 @@ def execSQL(sql, one= True, debugOutput= False):
     if debugOutput:
         print(sql)
     connection = pymysql.connect(host = "localhost",
-                                 user = "root",
+                                 user = "libextapp",
                                  password = "userpass1234",
                                  db = "bookcrossing",
                                  cursorclass=pymysql.cursors.Cursor)
