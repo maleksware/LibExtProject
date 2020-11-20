@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 #TODO: Remove Spaghetti Code
-
 #TODO: Settings content
 #TODO: Create camera
 #TODO: Create testcases for testing
@@ -13,6 +12,11 @@
 #TODO: Recreate Login screen
 #TODO: Interface Update
 #TODO: Add the option of taking books right from the modal window
+#TODO: Add User and ISBN class support
+#TODO: #book tag for a book is assigned by default
+#TODO: take_book function
+
+
 # Kivy imports
 
 import kivy
@@ -45,6 +49,7 @@ import pymysql
 from re import *
 import smtplib
 # No imports after this line!
+
 
 # System configs
 Config.set("graphics", "resizable", "false")
@@ -118,8 +123,6 @@ def modalNews(id):
     bookModal = MDDialog(title= news[0], type= "custom", text= news[1], buttons= [MDFlatButton(text="OK")], size_hint= (0.7, None))
     bookModal.open()
 
-
-
 def processLongTitle(text, processTo):
     if len(text) > processTo:
         return text[:processTo] + "..."
@@ -165,6 +168,9 @@ def reduceISBN(isbn):
     reducedISBN = isbn
     reducedISBN = "".join(reducedISBN.split("-"))
     return reducedISBN
+
+def take_book():
+    pass
 
 def encodeTagsLine(tags):
 
@@ -221,7 +227,7 @@ def modal():
     book = modalview(book_id)
     if book == None:
         return None
-    bookModal = MDDialog(title= book[4], type= "custom", text= generateModalTextBook(book), buttons= [MDFlatButton(text="OK")], size_hint= (0.7, None))
+    bookModal = MDDialog(title= book[4], type= "custom", text= generateModalTextBook(book), buttons= [MDFlatButton(text="Take this book", on_press = take_book), MDFlatButton(text="OK")], size_hint= (0.7, None))
     bookModal.open()
 
 def f_btn_book(self,a_id):
@@ -904,6 +910,19 @@ class DeleteProfile(Screen):
 class CustomAppException(Exception):
     pass
 
+class User():
+    def __init__(self):
+        pass
+    def take_book(self):
+        pass
+    def give_book(self):
+        pass
+    def login(self):
+        pass
+    def logout(self):
+        pass
+    def getNameAndSurname(self):
+        pass
 # No widget and layout classes after this line!
 
 # The Screenmanager
