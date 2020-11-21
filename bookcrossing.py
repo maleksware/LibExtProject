@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 
-#TODO: Remove Spaghetti Code
-#TODO: Settings content
-#TODO: Create camera
-#TODO: Create testcases for testing
-#TODO: Add ranks for users
-#TODO: Send the db to a server
-#TODO: Recreate MyBooks and Search structure
-#TODO: Repaint arrows
-#TODO: GiveAndTake options
-#TODO: Recreate Login screen
-#TODO: Interface Update
-#TODO: Add the option of taking books right from the modal window
-#TODO: Add User and ISBN class support
-#TODO: #book tag for a book is assigned by default
-#TODO: take_book function
+# TODO: Remove Spaghetti Code
+# TODO: Settings content
+# TODO: Create camera
+# TODO: Create testcases for testing
+# TODO: Add ranks for users
+# TODO: Send the db to a server
+# TODO: Recreate MyBooks and Search structure
+# TODO: Repaint arrows
+# TODO: GiveAndTake options
+# TODO: Recreate Login screen
+# TODO: Interface Update
+# TODO: Add the option of taking books right from the modal window
+# TODO: Add User and ISBN class support
+# TODO: #book tag for a book is assigned by default
+# TODO: take_book function
 
 
 # Kivy imports
@@ -56,16 +56,22 @@ Config.set("graphics", "resizable", "false")
 Config.set("graphics", "width", 450)
 Config.set("graphics", "height", 800)
 kivy.require("1.11.1")
-Window.size = (450,800)
+Window.size = (450, 800)
 # No system settings and configs after this line!
 
 # Global variables with their comments
 firstEnter = True
 dataLoaded = False
-ranking = {10: "Student", 50: "Librarian", 100: "Booklover", 200: "Top Reader", 500: "Writer"}
+ranking = {10: "Student",
+           50: "Librarian",
+           100: "Booklover",
+           200: "Top Reader",
+           500: "Writer"}
 # No global vars after this line!
 
 # Functions
+
+
 def generateModalTextBook(book):
     owner = book[0]
     id = book[2]
@@ -90,16 +96,18 @@ def generateModalTextBook(book):
         text.append("Owner: " + ownerText)
     return "\n\n".join(text)
 
+
 def cwq(string):
     return '"' + str(string) + '"'
 
-def execSQL(sql, one= True, debugOutput= False):
+
+def execSQL(sql, one=True, debugOutput=False):
     if debugOutput:
         print(sql)
-    connection = pymysql.connect(host = "localhost",
-                                 user = "libextapp",
-                                 password = "userpass1234",
-                                 db = "bookcrossing",
+    connection = pymysql.connect(host="localhost",
+                                 user="libextapp",
+                                 password="userpass1234",
+                                 db="bookcrossing",
                                  cursorclass=pymysql.cursors.Cursor)
     try:
         with connection.cursor() as cursor:
@@ -117,17 +125,24 @@ def execSQL(sql, one= True, debugOutput= False):
     finally:
         connection.close()
 
+
 def modalNews(id):
     request = 'SELECT * FROM info WHERE id = ' + id
     news = execSQL(request)
-    bookModal = MDDialog(title= news[0], type= "custom", text= news[1], buttons= [MDFlatButton(text="OK")], size_hint= (0.7, None))
+    bookModal = MDDialog(title=news[0],
+                         type="custom",
+                         text=news[1],
+                         buttons=[MDFlatButton(text="OK")],
+                         size_hint=(0.7, None))
     bookModal.open()
+
 
 def processLongTitle(text, processTo):
     if len(text) > processTo:
         return text[:processTo] + "..."
     else:
         return text
+
 
 def hasThisBook(mail, book, reqType="book_id"):
     book = str(book)
@@ -142,17 +157,19 @@ def hasThisBook(mail, book, reqType="book_id"):
         return True
     return False
 
+
 def isID(text):
     try:
         text = str(text)
         request = 'SELECT * FROM books WHERE book_id = ' + cwq(text)
         result = execSQL(request)
-        if result == None:
+        if result is None:
             return False
         else:
             return True
     except:
         return False
+
 
 def isISBN(text):
     try:
@@ -164,13 +181,16 @@ def isISBN(text):
     except:
         return False
 
+
 def reduceISBN(isbn):
     reducedISBN = isbn
     reducedISBN = "".join(reducedISBN.split("-"))
     return reducedISBN
 
+
 def take_book():
     pass
+
 
 def encodeTagsLine(tags):
 
@@ -188,8 +208,10 @@ def encodeTagsLine(tags):
     tags = list(newTags)
     return "^".join(tags)
 
+
 def decodeTagsLine(tags):
     return tags.split("^")
+
 
 def showTags(tags):
     tags = tags.split("^")
@@ -198,6 +220,7 @@ def showTags(tags):
         tag = "#" + tag
         toShow.append(tag)
     return ", ".join(toShow)
+
 
 def my_books():
     mail = App.get_running_app().email
@@ -211,6 +234,7 @@ def my_books():
 
     return result
 
+
 def modalview(b_id):
     request = 'SELECT * FROM books WHERE book_id = ' + cwq(str(b_id))
     result = None
@@ -219,6 +243,7 @@ def modalview(b_id):
     except pymysql.Error as err:
         App.get_running_app().show_popup("Database Error:" + str(err))
     return result
+
 
 def modal():
     book_id = App.get_running_app().current_book_id
@@ -230,9 +255,11 @@ def modal():
     bookModal = MDDialog(title= book[4], type= "custom", text= generateModalTextBook(book), buttons= [MDFlatButton(text="Take this book", on_press = take_book), MDFlatButton(text="OK")], size_hint= (0.7, None))
     bookModal.open()
 
+
 def f_btn_book(self,a_id):
     App.get_running_app().current_book_id = a_id
     modal()
+
 
 def bookSearch(request):
     bookList = execSQL('SELECT * FROM books', one = False)
@@ -256,25 +283,28 @@ def bookSearch(request):
 
     return results
 
+
 def splitISBN(isbn):
     isbn = list(isbn.split("-"))
     isbn = list("".join(isbn).strip())
     return "".join(isbn)
 
+
 def divideToCheck(isbn):
     return (isbn[:-1], isbn[-1])
+
 
 def checkISBN(isbn, checkDigit):
     sum = 0
     ######################################
     if len(isbn) == 9:
-        for i in range(10,1,-1):
-            isbnNum = int(isbn[10-i])
+        for i in range(10, 1, -1):
+            isbnNum = int(isbn[10 - i])
             sum += isbnNum * i
         sum %= 11
         if checkDigit == "X":
             checkDigit = 10
-        if (int(checkDigit)+sum) % 11 == 0:
+        if (int(checkDigit) + sum) % 11 == 0:
             return True
         else:
             return False
@@ -282,9 +312,9 @@ def checkISBN(isbn, checkDigit):
     elif len(isbn) == 12:
         if checkDigit == "X":
             checkDigit = 10
-        indexes = [1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3]
+        indexes = [1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3]
         for i in range(len(isbn)):
-            sum += (int(isbn[i])*indexes[i])
+            sum += (int(isbn[i]) * indexes[i])
         sum = sum % 10
         if (int(checkDigit) + sum) % 10 == 0:
             return True
@@ -293,9 +323,11 @@ def checkISBN(isbn, checkDigit):
     else:
         return False
 
+
 def isValid(isbn):
     isbn = splitISBN(isbn)
     return checkISBN(divideToCheck(isbn)[0],checkDigit = divideToCheck(isbn)[1])
+
 
 def isValidEmail(email):
     def isValidHost(host):
@@ -343,10 +375,12 @@ def isValidEmail(email):
         return False
     return False
 
+
 def upgradeRank(rank, count=1):
     rank = int(rank)
     rank += count
     return str(rank)
+
 
 def getNameAndSurname(email):
     name, surname = tuple(execSQL("SELECT name, surname FROM users"))
@@ -367,11 +401,13 @@ class Annot(Screen):
         else:
             self.manager.current = "Loading"
 
+
 class Loading(Screen):
     def toLogin(self):
         App.get_running_app().screenStack = []
         print("toLogin")
         self.manager.current = "Login"
+
 
 class Login(Screen):
     def clearEmail(self):
@@ -404,6 +440,7 @@ class Login(Screen):
         user = execSQL('SELECT * FROM users WHERE email = ' + cwq(self.mail.text))
         App.get_running_app().rank = user[-1]
         print(user[-1])
+
 
 class MyBooks(Screen):
     def stack(self):
@@ -446,6 +483,7 @@ class MyBooks(Screen):
               App.get_running_app().show_popup("You didn't sign up or sign in. Please do it")
         except Exception as e:
             print("AN EXCEPTION OCCURRED", e)
+
 
 class GiveAndTake(Screen):
     def clearInput(self):
@@ -596,6 +634,7 @@ class GiveAndTake(Screen):
         except UnboundLocalError:
             return
 
+
 class Add(Screen):
     def clearInput(self):
         self.isbn.text = ''
@@ -651,12 +690,14 @@ class Add(Screen):
         except IndexError:
             App.get_running_app().show_popup("You didn't write all.")
 
+
 class Ok(Screen):
     def stack(self):
         App.get_running_app().screenStack.append("Ok")
     def back(self):
         del App.get_running_app().screenStack[-1]
         self.manager.current = App.get_running_app().screenStack[-1]
+
 
 class Search(Screen):
     def back(self):
@@ -700,6 +741,7 @@ class Search(Screen):
         except UnboundLocalError:
             return
 
+
 class Set(Screen):
     def back(self):
         del App.get_running_app().screenStack[-1]
@@ -707,6 +749,7 @@ class Set(Screen):
 
     def stack(self):
         App.get_running_app().screenStack.append("Set")
+
 
 class SignUp(Screen):
     def back(self):
@@ -741,6 +784,7 @@ class SignUp(Screen):
             self.mail.text = ''
             App.get_running_app().show_popup( "This user already exists." )
 
+
 class Profile(Screen):
     def back(self):
         del App.get_running_app().screenStack[-1]
@@ -761,6 +805,7 @@ class Profile(Screen):
         pair = getNameAndSurname(App.get_running_app().email)
         self.nameLabel.text = pair[0]
         self.surnameLabel.text = pair[1]
+
 
 class UpdateProfile(Screen):
     def prepareInputs(self):
@@ -802,6 +847,7 @@ class UpdateProfile(Screen):
             else:
                 App.get_running_app().show_popup("Write the number of your class.")
 
+
 class AboutProblem(Screen):
     def back(self):
         del App.get_running_app().screenStack[-1]
@@ -838,6 +884,7 @@ class AboutProblem(Screen):
         except Exception as e:
             print(e)
 
+
 class Spravka(Screen):
     def back(self):
         del App.get_running_app().screenStack[-1]
@@ -846,12 +893,14 @@ class Spravka(Screen):
     def stack(self):
         App.get_running_app().screenStack.append("Spravka")
 
+
 class AboutAttachment(Screen):
     def back(self):
         del App.get_running_app().screenStack[-1]
         self.manager.current = App.get_running_app().screenStack[-1]
     def stack(self):
         App.get_running_app().screenStack.append("AboutAttachment")
+
 
 class Information(Screen):
     def back(self):
@@ -877,12 +926,14 @@ class Information(Screen):
     def offer(self):
         App.get_running_app().show_popup(text= "To offer news, please, \ncontact us using \nsupport@codinghurricane.org", size= 0.7)
 
+
 class AboutDevelopers(Screen):
     def back(self):
         del App.get_running_app().screenStack[-1]
         self.manager.current = App.get_running_app().screenStack[-1]
     def stack(self):
         App.get_running_app().screenStack.append("AboutDevelopers")
+
 
 class DeleteProfile(Screen):
     def back(self):
@@ -904,6 +955,8 @@ class DeleteProfile(Screen):
                 self.manager.current = "Set"
         else:
             App.get_running_app().show_popup("Please click this checkbox to delete\nthe profile.")
+
+
 # No screen classes after this line!
 
 # Widget and layout classes
