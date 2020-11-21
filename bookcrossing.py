@@ -15,6 +15,7 @@
 # TODO: Add User and ISBN class support
 # TODO: #book tag for a book is assigned by default
 # TODO: take_book function
+# TODO: PEP8 validation
 
 
 # Kivy imports
@@ -247,12 +248,18 @@ def modalview(b_id):
 
 def modal():
     book_id = App.get_running_app().current_book_id
-    if book_id == "" or book_id == None:
+    if book_id == "" or book_id is None:
         return
     book = modalview(book_id)
-    if book == None:
+    if book is None:
         return None
-    bookModal = MDDialog(title= book[4], type= "custom", text= generateModalTextBook(book), buttons= [MDFlatButton(text="Take this book", on_press = take_book), MDFlatButton(text="OK")], size_hint= (0.7, None))
+    bookModal = MDDialog(title=book[4],
+                         type="custom",
+                         text=generateModalTextBook(book),
+                         buttons=[MDFlatButton(text="Take this book",
+                                               on_press=take_book),
+                                  MDFlatButton(text="OK")],
+                         size_hint=(0.7, None))
     bookModal.open()
 
 
@@ -719,16 +726,17 @@ class Search(Screen):
             books = bookSearch(self.searchTextInput.text)
             if books != []:
 
-                self.bookLayout.add_widget(Label(text='Books:', text_size= (self.width, row_height),font_size = 20, halign = 'left'))
+                self.bookLayout.add_widget(Label(text='Books:', text_size=(self.width, row_height), font_size=20, halign='left'))
                 k = 0
                 for i in books:
                     k += 1
                     Btn = Button(background_color=[0.9, 0.9, 0.9, 1],
                                 color=(0, 0, 0, 1),
                                 background_normal="",
-                                text= "  " + str(k) + ") " + processLongTitle(str(i[5]), 20) + " : " + processLongTitle(str(i[4]), 20),
-                                text_size = (self.width,row_height),
-                                halign = 'left',font_size = 17,
+                                text="  " + str(k) + ") " + processLongTitle(str(i[5]), 20) + " : " + processLongTitle(str(i[4]), 20),
+                                text_size=(self.width,row_height),
+                                halign='left',
+                                font_size=17,
                                 )
                     m_book_id = i[2]
                     Btn.bind(on_release= lambda x, m_book_id = m_book_id : f_btn_book(self, m_book_id))
@@ -759,27 +767,27 @@ class SignUp(Screen):
         App.get_running_app().screenStack.append("SignUp")
     def click(self, btn):
         App.get_running_app().email = self.mail.text
-        pattern = compile( '(^|\s)[-a-z0-9_.]+@([-a-z0-9]+\.)+[a-z]{2,6}(\s|$)' )
+        pattern = compile('(^|\s)[-a-z0-9_.]+@([-a-z0-9]+\.)+[a-z]{2,6}(\s|$)')
         is_valid = pattern.match( self.mail.text )
         m_record = execSQL('SELECT * FROM users WHERE email = ' + cwq(self.mail.text))
         if m_record == None:
             if not (self.familia.text) or not (self.nam.text) or not (self.mail.text) or not self.class1.text:
-                App.get_running_app().show_popup( "You didn't write all." )
+                App.get_running_app().show_popup("You didn't write all.")
             elif not is_valid:
                 self.mail.text = ''
-                App.get_running_app().show_popup( "Your email isn't correct" )
+                App.get_running_app().show_popup("Your email isn't correct")
             elif self.class1.text in ["5", "6", "7", "8", "9", "10", "11"]:
                 try:
                     execSQL('INSERT INTO users (name, surname, class, email, rank) VALUES (' + cwq(self.nam.text) + ', ' + cwq(self.familia.text) + ', ' + cwq(self.class1.text) + ', ' + cwq(self.mail.text) + ', ' + cwq("0") + ')')
                 except pymysql.Error as err:
-                    App.get_running_app().show_popup( "Database Error" )
+                    App.get_running_app().show_popup("Database Error")
                     print(err)
                 else:
                     self.manager.current = 'MyBooks'
                     App.get_running_app().show_popup('Hello ' + self.nam.text)
             else:
                 self.class1.text = ''
-                App.get_running_app().show_popup( "Write the number of your class." )
+                App.get_running_app().show_popup("Write the number of your class.")
         else:
             self.mail.text = ''
             App.get_running_app().show_popup( "This user already exists." )
@@ -789,18 +797,24 @@ class Profile(Screen):
     def back(self):
         del App.get_running_app().screenStack[-1]
         self.manager.current = App.get_running_app().screenStack[-1]
+
     def stack(self):
         if App.get_running_app().screenStack[-1] != "Profile":
             App.get_running_app().screenStack.append("Profile")
+
     def editProfile(self):
         self.manager.current = "UpdateProfile"
+
     def deleteProfile(self):
         self.manager.current = "DeleteProfile"
+
     def logout(self):
         App.get_running_app().email = None
         self.manager.current = "Login"
+
     def getRank(self):
         return "levo"
+
     def initProfile(self):
         pair = getNameAndSurname(App.get_running_app().email)
         self.nameLabel.text = pair[0]
@@ -812,15 +826,17 @@ class UpdateProfile(Screen):
         user = App.get_running_app().email
         self.mail.text = user
         result = execSQL('SELECT * FROM users WHERE email = ' + cwq(user))
-
         self.nam.text = result[0]
         self.familia.text = result[1]
         self.class1.text = result[2]
+
     def back(self):
         del App.get_running_app().screenStack[-1]
         self.manager.current = App.get_running_app().screenStack[-1]
+
     def stack(self):
         App.get_running_app().screenStack.append("UpdateProfile")
+
     def click1(self,btn):
         App.get_running_app().email = self.mail.text
         email_ok = isValidEmail( self.mail.text )
@@ -828,8 +844,6 @@ class UpdateProfile(Screen):
         if m_record == None:
             App.get_running_app().show_popup("This user doesn't exist.")
         else:
-
-
             if not (self.familia.text) or not (self.nam.text)  or not (
                     self.mail.text) or not self.class1.text :
                 App.get_running_app().show_popup("You didn't write all.")
@@ -852,26 +866,20 @@ class AboutProblem(Screen):
     def back(self):
         del App.get_running_app().screenStack[-1]
         self.manager.current = App.get_running_app().screenStack[-1]
+
+
     def stack(self):
         App.get_running_app().screenStack.append("AboutProblem")
+
+
     def ClickOk(self, btn):
         try:
             mail = App.get_running_app().email
             if not self.feedback.text:
-                App.get_running_app().show_popup("Write your comment !!!.")
+                App.get_running_app().show_popup("Write your comment")
             else:
                 try:
-                    sender = "Our email"
-                    recipient = "Our email"
-                    password = "Our password of email"
-                    subject = "Письмо от пользователя: "+mail
                     text =  self.feedback.text
-
-                    smtp_server = smtplib.SMTP_SSL( "smtp.mail.ru", 465 )
-                    smtp_server.login( sender, password )
-                    message = "Subject: {}\n\n{}".format( subject, text )
-                    smtp_server.sendmail( sender, recipient, message.encode( 'utf-8' ) )
-                    smtp_server.close()
                     execSQL('INSERT INTO feedback (postedBy, feedback) VALUES (' + cwq(mail) + ', ' + cwq(self.feedback.text) + ')')
                 except pymysql.Error as err:
                     App.get_running_app().show_popup("Database Error")
@@ -912,19 +920,22 @@ class Information(Screen):
 
     def showNews(self):
         self.newsLayout.clear_widgets()
-        news = execSQL('SELECT * FROM info', one= False)
+        news = execSQL('SELECT * FROM info', one=False)
         self.newsLayout.bind(minimum_height=self.newsLayout.setter('height'))
         for i in news:
-            Btn = Button(text= i[1],
-                        halign= 'left',
-                        background_normal= "",
-                        color= [0, 0, 0, 1],
-                        background_color= [0.9, 0.9, 0.9, 1])
+            Btn = Button(text=i[1],
+                        halign='left',
+                        background_normal="",
+                        color=[0, 0, 0, 1],
+                        background_color=[0.9, 0.9, 0.9, 1])
             newID = i[0]
-            Btn.bind(on_release= lambda x, id = newID : modalNews(id))
+            Btn.bind(on_release=lambda x, id=newID:modalNews(id))
             self.newsLayout.add_widget(Btn)
     def offer(self):
-        App.get_running_app().show_popup(text= "To offer news, please, \ncontact us using \nsupport@codinghurricane.org", size= 0.7)
+        App.get_running_app().show_popup(text="""To offer news, please, \n
+                                                contact us using \n
+                                                support@codinghurricane.org""",
+                                         size= 0.7)
 
 
 class AboutDevelopers(Screen):
@@ -945,8 +956,10 @@ class DeleteProfile(Screen):
     def delete(self):
         if self.checkbox.active == True:
             try:
-                execSQL('DELETE FROM users WHERE email = ' + cwq(App.get_running_app().email))
-                App.get_running_app().show_popup("The profile was\nsuccessfully deleted!")
+                userEmail = App.get_running_app().email
+                execSQL('DELETE FROM users WHERE email = ' + cwq(userEmail))
+                App.get_running_app().show_popup("""The profile was\n
+                                                    successfully deleted!""")
                 self.manager.current = "Login"
             except Exception as e:
                 App.get_running_app().screenStack = []
@@ -954,7 +967,8 @@ class DeleteProfile(Screen):
                 App.get_running_app().show_popup("An error occured.")
                 self.manager.current = "Set"
         else:
-            App.get_running_app().show_popup("Please click this checkbox to delete\nthe profile.")
+            App.get_running_app().show_popup("""Please click this checkbox to
+                                                delete\nthe profile.""")
 
 
 # No screen classes after this line!
@@ -963,48 +977,67 @@ class DeleteProfile(Screen):
 class CustomAppException(Exception):
     pass
 
+
 class User():
     def __init__(self):
         pass
+
     def take_book(self):
         pass
+
     def give_book(self):
         pass
+
     def login(self):
         pass
+
     def logout(self):
         pass
+
     def getNameAndSurname(self):
         pass
+
 # No widget and layout classes after this line!
 
 # The Screenmanager
 # DO NOT MODIFY
+
+
 class Screens(ScreenManager):
     email = ''
+
     def __init__(self, **kwargs):
         super(Screens, self).__init__(**kwargs)
+
     def build(self):
         sm = ScreenManager()
 
+
 # The App class
+
+
 class Bookcrossing(MDApp):
     current_book_id = ""
+
     def show_popup(self, text, size=0.5):
         self.popup = MDDialog(
             title=text,
             buttons=[MDFlatButton(text="OK",
-                text_color=self.theme_cls.primary_color,
-                on_release=self.close_popup)],
-            size_hint_x = size)
+                                  text_color=self.theme_cls.primary_color,
+                                  on_release=self.close_popup)],
+            size_hint_x=size)
         self.popup.open()
+
     def close_popup(self, instance):
         self.popup.dismiss()
+
     def build(self):
         self.m = Screens(transition=NoTransition())
         return self.m
+
     def toApp(self, dt):
         self.m.current = "MyBooks"
+
 
 if __name__ == "__main__":
     Bookcrossing().run()
