@@ -42,33 +42,23 @@
                 row_force_default: True
                 row_default_height: 30
                 size_hint_y: None
-    BoxLayout:
-        Button:
-            size_hint: None,None
-            size: 90, 85
-            on_press: root.manager.current = "MyBooks"
-            background_normal: "myBooks.png"
-        Button:
-            size_hint: None,None
-            size: 90, 85
-            on_press: root.manager.current = "GiveAndTake"
-            background_normal: "arrowsBook.png"
-        Button:
-            size_hint: None,None
-            size: 90, 85
-            on_press: root.manager.current = "Add"
-            background_normal: "add.png"
-        Button:
-            size_hint: None,None
-            size: 90, 85
-            on_press: root.manager.current = "Search"
-            background_normal: "search.png"
-        Button:
-            size_hint: None,None
-            size: 90, 85
-            on_press: root.manager.current = "Set"
-            background_normal: "settingsSign.png"
+            BoxLayout:
+                MDBottomNavigation:
+                    panel_color: .2, .2, .2, 1
+                    MDBottomNavigationItem:
+                        name: 'screen 1'
+                        text: 'Python'
+                        icon: 'language-python'
 
+                    MDBottomNavigationItem:
+                        name: 'screen 2'
+                        text: 'C++'
+                        icon: 'language-cpp'
+
+                    MDBottomNavigationItem:
+                        name: 'screen 3'
+                        text: 'JS'
+                        icon: 'language-javascript'
 <GiveAndTake>
     on_enter:
         root.clearInput()
