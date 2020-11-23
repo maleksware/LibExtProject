@@ -44,6 +44,7 @@ from kivymd.uix.behaviors import RectangularElevationBehavior, FocusBehavior
 import pymysql
 from re import *
 import smtplib
+from kivymd.uix.bottomnavigation import MDBottomNavigationItem
 # No imports after this line!
 
 # System configs
