@@ -14,7 +14,7 @@
 # TODO: Add the option of taking books right from the modal window
 # TODO: Add User and ISBN class support
 # TODO: take_book function
-# TODO: PEP8 validation
+# TODO: Backticks in execSQL function calls
 
 
 # Kivy imports
