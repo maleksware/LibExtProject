@@ -4,7 +4,6 @@
     Label:
         text: "Annot"
 
-
 <Loading>
     on_enter: self.toLogin()
     name: "Loading"
@@ -42,23 +41,25 @@
                 row_force_default: True
                 row_default_height: 30
                 size_hint_y: None
-            BoxLayout:
-                MDBottomNavigation:
-                    panel_color: .2, .2, .2, 1
-                    MDBottomNavigationItem:
-                        name: 'screen 1'
-                        text: 'Python'
-                        icon: 'language-python'
 
-                    MDBottomNavigationItem:
-                        name: 'screen 2'
-                        text: 'C++'
-                        icon: 'language-cpp'
+    MDBottomNavigation:
+        size_hint: (1, None)
+        panel_color: .2, .2, .2, 1
+        MDBottomNavigationItem:
+            name: 'screen 1'
+            text: 'Python'
+            icon: 'language-python'
 
-                    MDBottomNavigationItem:
-                        name: 'screen 3'
-                        text: 'JS'
-                        icon: 'language-javascript'
+        MDBottomNavigationItem:
+            name: 'screen 2'
+            text: 'C++'
+            icon: 'language-cpp'
+
+        MDBottomNavigationItem:
+            name: 'screen 3'
+            text: 'JS'
+            icon: 'language-javascript'
+
 <GiveAndTake>
     on_enter:
         root.clearInput()
@@ -643,16 +644,41 @@
         root.checkToLoading()
 
     GridLayout:
+        rows: 5
+        cols: 1
+        row_default_height: 160
+        Widget:
+        BoxLayout:
+            size_hint_y: 0.7
+            orientation: "horizontal"
+            Widget:
+                size_hint: (0.3, None)
+            MDTextFieldRound:
+                id: mail
+                font_size: 30
+                icon_left: "email"
+                hint_text: "Field with left icon"
+                color_active: 1, 1, 1, 1
+                normal_color: 1, 1, 1, 1
+                size_hint: (None, 0.3)
+            Widget:
+                size_hint: (0.3, None)
+
+
+
+
+
+    GridLayout:
         cols:1
         MDLabel:
-            text:'Bookcrossing 1505'
+            text: "¬ход"
             font_style:'H4'
             halign:'center'
             size_hint:0.4,None
-        Image:
-            source:'book.png'
-            allow_stretch:False
-            size_hint:0.4,0.8
+      #  Image:
+      #      source:'book.png'
+      #      allow_stretch:False
+        #    size_hint:0.4,0.8
         MDTextField:
             id:mail
             multiline: False
@@ -661,17 +687,17 @@
             font_size:25
             icon_right:'email'
             on_text_validate: root.switch(self.text)
-        MDRoundFlatButton:
-            text:'Sign in'
-            size_hint:0.4,0.1
-            on_release:
-                root.switch(self.text)
-        MDRoundFlatButton:
-            text:'Sign up'
-            background_color:0,1,0,1
-            text_color:0,1,0,1
-            size_hint:0.4,0.1
-            on_release:root.manager.current = ('SignUp')
+      #  MDRoundFlatButton:
+      #      text:'Sign in'
+      #      size_hint:0.4,0.1
+      #      on_release:
+      #          root.switch(self.text)
+      #  MDRoundFlatButton:
+      #      text:'Sign up'
+      #      background_color:0,1,0,1
+      #      text_color:0,1,0,1
+      #      size_hint:0.4,0.1
+      #      on_release:root.manager.current = ('SignUp')
 
 <SignUp>
     on_enter:

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: cp1251 -*-
 
 # TODO: Remove Spaghetti Code
 # TODO: Settings content
@@ -46,15 +46,6 @@ kivy.require("1.11.1")
 Window.size = (450, 800)
 # No system settings and configs after this line!
 
-# Global variables with their comments
-firstEnter = True
-dataLoaded = False
-ranking = {10: "Student",
-           50: "Librarian",
-           100: "Booklover",
-           200: "Top Reader",
-           500: "Writer"}
-# No global vars after this line!
 
 # Functions
 
@@ -421,6 +412,12 @@ class Login(Screen):
             else:
                 self.defineRank()
                 self.manager.current = 'MyBooks'
+
+    def login(self):
+        global user
+        user.login()
+
+
 
     def defineRank(self):
         mail = cwq(self.mail.text)
@@ -1070,6 +1067,17 @@ class User():
 
 # No widget and layout classes after this line!
 
+
+# Global variables with their comments
+firstEnter = True
+dataLoaded = False
+ranking = {10: "Student",
+           50: "Librarian",
+           100: "Booklover",
+           200: "Top Reader",
+           500: "Writer"}
+user = User()
+# No global vars after this line!
 # The Screenmanager
 # DO NOT MODIFY
 
