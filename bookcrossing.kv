@@ -13,52 +13,153 @@
         text: "Loading"
 
 <MyBooks>
+    on_enter:
+        root.clearInput()
+        root.stack()
+    name: "GiveAndTake"
+    isbn:isbn
+    code:code
     bookLayout: bookLayout
     name: "MyBooks"
     on_enter:
         root.stack()
         root.my_book(self)
-    AnchorLayout:
-        anchor_x: 'right'
-        anchor_y: 'top'
-        GridLayout:
-            cols: 2
-            MDLabel:
-                text: 'My Books'
-                size_hint: (0.1, None)
-                font_size: 30
-                halign:'center'
-    GridLayout:
-        cols: 1
-        Widget:
-            size_hint: 1, 0.2
-        ScrollView:
-            do_scroll_x: False
-            do_scroll_y: True
-            GridLayout:
-                spacing: 10
-                id: bookLayout
-                cols: 1
-                row_force_default: True
-                row_default_height: 30
-                size_hint_y: None
-             BoxLayout:
-                MDBottomNavigation:
-                    panel_color: .2, .2, .2, 1
-                    MDBottomNavigationItem:
-                        name: 'screen 1'
-                        text: 'Python'
-                        icon: 'language-python'
 
-                    MDBottomNavigationItem:
-                        name: 'screen 2'
-                        text: 'C++'
-                        icon: 'language-cpp'
+    BoxLayout:
+        orientation:'vertical'
 
-                    MDBottomNavigationItem:
-                        name: 'screen 3'
-                        text: 'JS'
-                        icon: 'language-javascript'
+        MDToolbar:
+            title: 'Bottom navigation'
+            md_bg_color: .2, .2, .2, 1
+            specific_text_color: 1, 1, 1, 1
+
+        MDBottomNavigation:
+            panel_color: .2, .2, .2, 1
+
+            MDBottomNavigationItem:
+                name: 'screen 1'
+                text: 'Python'
+                icon: 'language-python'
+                AnchorLayout:
+                    anchor_x: 'right'
+                    anchor_y: 'top'
+                    GridLayout:
+                        cols: 2
+                        MDLabel:
+                            text: 'My Books'
+                            size_hint: (0.1, None)
+                            font_size: 30
+                            halign:'center'
+                GridLayout:
+                    cols: 1
+                    Widget:
+                        size_hint: 1, 0.2
+                    ScrollView:
+                        do_scroll_x: False
+                        do_scroll_y: True
+                        GridLayout:
+                            spacing: 10
+                            id: bookLayout
+                            cols: 1
+                            row_force_default: True
+                            row_default_height: 30
+                            size_hint_y: None
+
+
+            MDBottomNavigationItem:
+                name: 'screen 2'
+                text: 'C++'
+                icon: 'language-cpp'
+
+                GridLayout:
+                    cols:1
+                    spacing:3
+                    MDLabel:
+                        text: "Give and take"
+                        size_hint: 1, None
+                        font_size:30
+                        halign:'center'
+                    MDLabel:
+                        text: "If you want to take the book, \nleave the 'Station' section blank"
+                        size_hint: 1, None
+                        halign:'center'
+                    MDTextField:
+                        id: isbn
+                        hint_text: "ISBN or ID"
+                        multiline: False
+                        size_hint: 1, None
+                    MDTextField:
+                        id: code
+                        hint_text: "Station"
+                        size_hint: 1, None
+                        multiline: False
+                    MDRoundFlatButton:
+                        text:'Ready'
+                        size_hint: 1, None
+                        on_release: root.give()
+
+
+            MDBottomNavigationItem:
+                name: 'GiveAndTake'
+                text: 'JS'
+                icon: 'language-javascript'
+
+                GridLayout:
+                    cols:1
+                    spacing:3
+                    MDLabel:
+                        text: "Give and take"
+                        size_hint: 1, None
+                        font_size:30
+                        halign:'center'
+                    MDLabel:
+                        text: "If you want to take the book, \nleave the 'Station' section blank"
+                        size_hint: 1, None
+                        halign:'center'
+                    MDTextField:
+                        id: isbn
+                        hint_text: "ISBN or ID"
+                        multiline: False
+                        size_hint: 1, None
+                    MDTextField:
+                        id: code
+                        hint_text: "Station"
+                        size_hint: 1, None
+                        multiline: False
+                    MDRoundFlatButton:
+                        text:'Ready'
+                        size_hint: 1, None
+                        on_release: root.give()
+
+
+
+                BoxLayout:
+                    Button:
+                        size_hint: None,None
+                        size: 90,85
+                        on_press: root.manager.current = "MyBooks"
+                        background_normal: "myBooks.png"
+                    Button:
+                        size_hint: None,None
+                        size: 90,85
+                        on_press: root.manager.current = "GiveAndTake"
+                        background_normal: "arrowsBook.png"
+                    Button:
+                        size_hint: None,None
+                        size: 90,85
+                        on_press: root.manager.current = "Add"
+                        background_normal: "add.png"
+                    Button:
+                        size_hint: None,None
+                        size: 90,85
+                        on_press: root.manager.current = "Search"
+                        background_normal: "search.png"
+                    Button:
+                        size_hint: None,None
+                        size: 90,85
+                        on_press: root.manager.current = "Set"
+                        background_normal: "settingsSign.png"
+
 <GiveAndTake>
     on_enter:
         root.clearInput()

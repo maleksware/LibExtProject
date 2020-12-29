@@ -430,6 +430,7 @@ class Login(Screen):
 
 
 class MyBooks(Screen):
+    
     def stack(self):
         App.get_running_app().screenStack.append("MyBooks")
 
