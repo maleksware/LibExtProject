@@ -35,6 +35,7 @@ from kivymd.toast import toast
 from kivymd.uix.label import MDLabel
 import pymysql
 import re
+import time
 # No imports after this line!
 
 
@@ -422,6 +423,8 @@ class Login(Screen):
         user = execSQL('SELECT * FROM users WHERE email = ' + mail)
         App.get_running_app().rank = user[-1]
         print(user[-1])
+
+
 
 
 class MyBooks(Screen):
