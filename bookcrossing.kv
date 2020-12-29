@@ -647,46 +647,37 @@
         rows: 5
         cols: 1
         row_default_height: 160
-        Widget:
-        BoxLayout:
-            size_hint_y: 0.7
-            orientation: "horizontal"
-            Widget:
-                size_hint: (0.3, None)
-            MDTextFieldRound:
-                id: mail
-                font_size: 30
-                icon_left: "email"
-                hint_text: "Field with left icon"
-                color_active: 1, 1, 1, 1
-                normal_color: 1, 1, 1, 1
-                size_hint: (None, 0.3)
-            Widget:
-                size_hint: (0.3, None)
 
-
-
-
-
-    GridLayout:
-        cols:1
         MDLabel:
             text: "¬ход"
-            font_style:'H4'
-            halign:'center'
-            size_hint:0.4,None
+            font_style: 'H4'
+            halign: 'center'
+            size_hint: 0.4, 0.1
+
+
+        MDTextFieldRound:
+            id: mail
+            font_size: 10
+            icon_left: "email"
+            color_active: 1, 1, 1, 1
+            normal_color: 1, 1, 1, 1
+            size_hint: (0.4, None)
+            on_text_validate: root.switch(self.text)
+
+
+        Widget:
+            size_hint: (0.2, 1)
+
+
+
+
+
+
+
       #  Image:
       #      source:'book.png'
       #      allow_stretch:False
         #    size_hint:0.4,0.8
-        MDTextField:
-            id:mail
-            multiline: False
-            hint_text:'Write your email'
-            size_hint:0.4,None
-            font_size:25
-            icon_right:'email'
-            on_text_validate: root.switch(self.text)
       #  MDRoundFlatButton:
       #      text:'Sign in'
       #      size_hint:0.4,0.1

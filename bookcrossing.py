@@ -417,8 +417,6 @@ class Login(Screen):
         global user
         user.login()
 
-
-
     def defineRank(self):
         mail = cwq(self.mail.text)
         user = execSQL('SELECT * FROM users WHERE email = ' + mail)
@@ -445,8 +443,8 @@ class MyBooks(Screen):
                     Btn = Button(background_color=[0.9, 0.9, 0.9, 1],
                                  color=(0, 0, 0, 1),
                                  text="  " + str(k) + ") " +
-                                      processLongTitle(str(i[5]), 20) +
-                                      " : " + processLongTitle(str(i[4]), 20),
+                                      + processLongTitle(str(i[5]), 20) +
+                                      + " : " + processLongTitle(str(i[4]), 20),
                                  text_size=(self.width, 30),
                                  halign="left",
                                  background_normal="")
