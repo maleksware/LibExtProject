@@ -4,7 +4,6 @@
     Label:
         text: "Annot"
 
-
 <Loading>
     on_enter: self.toLogin()
     name: "Loading"
@@ -13,152 +12,53 @@
         text: "Loading"
 
 <MyBooks>
-    on_enter:
-        root.clearInput()
-        root.stack()
-    name: "GiveAndTake"
-    isbn:isbn
-    code:code
     bookLayout: bookLayout
     name: "MyBooks"
     on_enter:
         root.stack()
         root.my_book(self)
+    AnchorLayout:
+        anchor_x: 'right'
+        anchor_y: 'top'
+        GridLayout:
+            cols: 2
+            MDLabel:
+                text: 'My Books'
+                size_hint: (0.1, None)
+                font_size: 30
+                halign:'center'
+    GridLayout:
+        cols: 1
+        Widget:
+            size_hint: 1, 0.2
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            GridLayout:
+                spacing: 10
+                id: bookLayout
+                cols: 1
+                row_force_default: True
+                row_default_height: 30
+                size_hint_y: None
 
-    BoxLayout:
-        orientation:'vertical'
+    MDBottomNavigation:
+        size_hint: (1, None)
+        panel_color: .2, .2, .2, 1
+        MDBottomNavigationItem:
+            name: 'screen 1'
+            text: 'Python'
+            icon: 'language-python'
 
-        MDToolbar:
-            title: 'Bottom navigation'
-            md_bg_color: .2, .2, .2, 1
-            specific_text_color: 1, 1, 1, 1
+        MDBottomNavigationItem:
+            name: 'screen 2'
+            text: 'C++'
+            icon: 'language-cpp'
 
-        MDBottomNavigation:
-            panel_color: .2, .2, .2, 1
-
-            MDBottomNavigationItem:
-                name: 'screen 1'
-                text: 'Python'
-                icon: 'language-python'
-                AnchorLayout:
-                    anchor_x: 'right'
-                    anchor_y: 'top'
-                    GridLayout:
-                        cols: 2
-                        MDLabel:
-                            text: 'My Books'
-                            size_hint: (0.1, None)
-                            font_size: 30
-                            halign:'center'
-                GridLayout:
-                    cols: 1
-                    Widget:
-                        size_hint: 1, 0.2
-                    ScrollView:
-                        do_scroll_x: False
-                        do_scroll_y: True
-                        GridLayout:
-                            spacing: 10
-                            id: bookLayout
-                            cols: 1
-                            row_force_default: True
-                            row_default_height: 30
-                            size_hint_y: None
-
-
-            MDBottomNavigationItem:
-                name: 'screen 2'
-                text: 'C++'
-                icon: 'language-cpp'
-
-                GridLayout:
-                    cols:1
-                    spacing:3
-                    MDLabel:
-                        text: "Give and take"
-                        size_hint: 1, None
-                        font_size:30
-                        halign:'center'
-                    MDLabel:
-                        text: "If you want to take the book, \nleave the 'Station' section blank"
-                        size_hint: 1, None
-                        halign:'center'
-                    MDTextField:
-                        id: isbn
-                        hint_text: "ISBN or ID"
-                        multiline: False
-                        size_hint: 1, None
-                    MDTextField:
-                        id: code
-                        hint_text: "Station"
-                        size_hint: 1, None
-                        multiline: False
-                    MDRoundFlatButton:
-                        text:'Ready'
-                        size_hint: 1, None
-                        on_release: root.give()
-
-
-            MDBottomNavigationItem:
-                name: 'GiveAndTake'
-                text: 'JS'
-                icon: 'language-javascript'
-
-                GridLayout:
-                    cols:1
-                    spacing:3
-                    MDLabel:
-                        text: "Give and take"
-                        size_hint: 1, None
-                        font_size:30
-                        halign:'center'
-                    MDLabel:
-                        text: "If you want to take the book, \nleave the 'Station' section blank"
-                        size_hint: 1, None
-                        halign:'center'
-                    MDTextField:
-                        id: isbn
-                        hint_text: "ISBN or ID"
-                        multiline: False
-                        size_hint: 1, None
-                    MDTextField:
-                        id: code
-                        hint_text: "Station"
-                        size_hint: 1, None
-                        multiline: False
-                    MDRoundFlatButton:
-                        text:'Ready'
-                        size_hint: 1, None
-                        on_release: root.give()
-
-
-
-                BoxLayout:
-                    Button:
-                        size_hint: None,None
-                        size: 90,85
-                        on_press: root.manager.current = "MyBooks"
-                        background_normal: "myBooks.png"
-                    Button:
-                        size_hint: None,None
-                        size: 90,85
-                        on_press: root.manager.current = "GiveAndTake"
-                        background_normal: "arrowsBook.png"
-                    Button:
-                        size_hint: None,None
-                        size: 90,85
-                        on_press: root.manager.current = "Add"
-                        background_normal: "add.png"
-                    Button:
-                        size_hint: None,None
-                        size: 90,85
-                        on_press: root.manager.current = "Search"
-                        background_normal: "search.png"
-                    Button:
-                        size_hint: None,None
-                        size: 90,85
-                        on_press: root.manager.current = "Set"
-                        background_normal: "settingsSign.png"
+        MDBottomNavigationItem:
+            name: 'screen 3'
+            text: 'JS'
+            icon: 'language-javascript'
 
 <GiveAndTake>
     on_enter:
@@ -744,35 +644,51 @@
         root.checkToLoading()
 
     GridLayout:
-        cols:1
+        rows: 5
+        cols: 1
+        row_default_height: 160
+
         MDLabel:
-            text:'Bookcrossing 1505'
-            font_style:'H4'
-            halign:'center'
-            size_hint:0.4,None
-        Image:
-            source:'book.png'
-            allow_stretch:False
-            size_hint:0.4,0.8
-        MDTextField:
-            id:mail
-            multiline: False
-            hint_text:'Write your email'
-            size_hint:0.4,None
-            font_size:25
-            icon_right:'email'
+            text: "Âõîä"
+            font_style: 'H4'
+            halign: 'center'
+            size_hint: 0.4, 0.1
+
+
+        MDTextFieldRound:
+            id: mail
+            font_size: 10
+            icon_left: "email"
+            color_active: 1, 1, 1, 1
+            normal_color: 1, 1, 1, 1
+            size_hint: (0.4, None)
             on_text_validate: root.switch(self.text)
-        MDRoundFlatButton:
-            text:'Sign in'
-            size_hint:0.4,0.1
-            on_release:
-                root.switch(self.text)
-        MDRoundFlatButton:
-            text:'Sign up'
-            background_color:0,1,0,1
-            text_color:0,1,0,1
-            size_hint:0.4,0.1
-            on_release:root.manager.current = ('SignUp')
+
+
+        Widget:
+            size_hint: (0.2, 1)
+
+
+
+
+
+
+
+      #  Image:
+      #      source:'book.png'
+      #      allow_stretch:False
+        #    size_hint:0.4,0.8
+      #  MDRoundFlatButton:
+      #      text:'Sign in'
+      #      size_hint:0.4,0.1
+      #      on_release:
+      #          root.switch(self.text)
+      #  MDRoundFlatButton:
+      #      text:'Sign up'
+      #      background_color:0,1,0,1
+      #      text_color:0,1,0,1
+      #      size_hint:0.4,0.1
+      #      on_release:root.manager.current = ('SignUp')
 
 <SignUp>
     on_enter:
