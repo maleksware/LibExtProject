@@ -23,48 +23,67 @@
     on_enter:
         root.stack()
         root.my_book(self)
-    AnchorLayout:
-        anchor_x: 'right'
-        anchor_y: 'top'
-        GridLayout:
-            cols: 2
-            MDLabel:
-                text: 'My Books'
-                size_hint: (0.1, None)
-                font_size: 30
-                halign:'center'
-    GridLayout:
-        cols: 1
-        Widget:
-            size_hint: 1, 0.2
-        ScrollView:
-            do_scroll_x: False
-            do_scroll_y: True
-            GridLayout:
-                spacing: 10
-                id: bookLayout
-                cols: 1
-                row_force_default: True
-                row_default_height: 30
-                size_hint_y: None
 
-    MDBottomNavigation:
-        size_hint: (1, None)
-        panel_color: .2, .2, .2, 1
-        MDBottomNavigationItem:
-            name: 'screen 1'
-            text: 'Python'
-            icon: 'language-python'
+    BoxLayout:
 
-        MDBottomNavigationItem:
-            name: 'screen 2'
-            text: 'C++'
-            icon: 'language-cpp'
+        MDBottomNavigation:
+            panel_color: .2, .2, .2, 1
+            size_hint:None,None
+            size:(450,800)
+            MDBottomNavigationItem:
+                name: 'MyBooks'
+                text: 'MyBooks'
+                icon: 'library-books'
+                AnchorLayout:
+                    anchor_x: 'right'
+                    anchor_y: 'top'
+                    GridLayout:
+                        cols: 2
+                        MDLabel:
+                            text: 'My Books'
+                            size_hint: (0.1, None)
+                            font_size: 30
+                            halign:'center'
+                GridLayout:
+                    cols: 1
+                    Widget:
+                        size_hint: 1, 0.2
+                    ScrollView:
+                        do_scroll_x: False
+                        do_scroll_y: True
+                        GridLayout:
+                            spacing: 10
+                            id: bookLayout
+                            cols: 1
+                            row_force_default: True
+                            row_default_height: 30
+                            size_hint_y: None
 
-        MDBottomNavigationItem:
-            name: 'screen 3'
-            text: 'JS'
-            icon: 'language-javascript'
+
+            MDBottomNavigationItem:
+                name: 'GiveAndTake'
+                text: 'Give&Take'
+                icon: 'reload'
+                GiveAndTake
+
+            MDBottomNavigationItem:
+                name: 'Add'
+                text: 'Add'
+                icon: 'plus-circle'
+                Add
+
+            MDBottomNavigationItem:
+                name: 'Search'
+                text: 'Search'
+                icon: 'book-search'
+                Search
+
+            MDBottomNavigationItem:
+                name: 'Set'
+                text: 'Settings'
+                icon: 'settings'
+                Set
+
 
 <GiveAndTake>
     on_enter:
@@ -100,34 +119,6 @@
             size_hint: 1, None
             on_release: root.give()
 
-
-
-    BoxLayout:
-        Button:
-            size_hint: None,None
-            size: 90,85
-            on_press: root.manager.current = "MyBooks"
-            background_normal: "myBooks.png"
-        Button:
-            size_hint: None,None
-            size: 90,85
-            on_press: root.manager.current = "GiveAndTake"
-            background_normal: "arrowsBook.png"
-        Button:
-            size_hint: None,None
-            size: 90,85
-            on_press: root.manager.current = "Add"
-            background_normal: "add.png"
-        Button:
-            size_hint: None,None
-            size: 90,85
-            on_press: root.manager.current = "Search"
-            background_normal: "search.png"
-        Button:
-            size_hint: None,None
-            size: 90,85
-            on_press: root.manager.current = "Set"
-            background_normal: "settingsSign.png"
 
 <Add>
     on_enter:
@@ -181,33 +172,6 @@
             on_release: root.addBook(self.text)
 
 
-    BoxLayout:
-        Button:
-            size_hint: None,None
-            size: 90,85
-            on_press: root.manager.current = "MyBooks"
-            background_normal: "myBooks.png"
-        Button:
-            size_hint: None,None
-            size: 90,85
-            on_press: root.manager.current = "GiveAndTake"
-            background_normal: "arrowsBook.png"
-        Button:
-            size_hint: None,None
-            size: 90,85
-            on_press: root.manager.current = "Add"
-            background_normal: "add.png"
-        Button:
-            size_hint: None,None
-            size: 90,85
-            on_press: root.manager.current = "Search"
-            background_normal: "search.png"
-        Button:
-            size_hint: None,None
-            size: 90,85
-            on_press: root.manager.current = "Set"
-            background_normal: "settingsSign.png"
-
 <Search>
     bookLayout: bookLayout
     searchTextInput: searchTextInput
@@ -249,33 +213,6 @@
                 row_default_height: 30
                 size_hint_y: None
                 Widget:
-
-    BoxLayout:
-        Button:
-            size_hint: None,None
-            size: 90,85
-            on_press: root.manager.current = "MyBooks"
-            background_normal: "myBooks.png"
-        Button:
-            size_hint: None,None
-            size: 90,85
-            on_press: root.manager.current = "GiveAndTake"
-            background_normal: "arrowsBook.png"
-        Button:
-            size_hint: None,None
-            size: 90,85
-            on_press: root.manager.current = "Add"
-            background_normal: "add.png"
-        Button:
-            size_hint: None,None
-            size: 90,85
-            on_press: root.manager.current = "Search"
-            background_normal: "search.png"
-        Button:
-            size_hint: None,None
-            size: 90,85
-            on_press: root.manager.current = "Set"
-            background_normal: "settingsSign.png"
 
 <Set>
     on_enter:
@@ -331,32 +268,7 @@
             size_hint:(0.4,None)
             background_normal: ""
             on_press:root.manager.current = 'AboutDevelopers'
-    BoxLayout:
-        Button:
-            size_hint: None,None
-            size: 90,85
-            on_press: root.manager.current = "MyBooks"
-            background_normal: "myBooks.png"
-        Button:
-            size_hint: None,None
-            size: 90,85
-            on_press: root.manager.current = "GiveAndTake"
-            background_normal: "arrowsBook.png"
-        Button:
-            size_hint: None,None
-            size: 90,85
-            on_press: root.manager.current = "Add"
-            background_normal: "add.png"
-        Button:
-            size_hint: None,None
-            size: 90,85
-            on_press: root.manager.current = "Search"
-            background_normal: "search.png"
-        Button:
-            size_hint: None,None
-            size: 90,85
-            on_press: root.manager.current = "Set"
-            background_normal: "settingsSign.png"
+  
 
 <Profile>
     nameLabel: nameLabel
@@ -691,6 +603,7 @@
             size_hint: None,None
         GridLayout:
             cols:2
+            pos_hint: {"center_x": .45}
             halign:'center'
             padding:40
             spacing:80

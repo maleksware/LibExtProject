@@ -444,13 +444,11 @@ class MyBooks(Screen):
                 for i in books:
                     k = k + 1
                     Btn = Button(background_color=[0.9, 0.9, 0.9, 1],
-                                 color=(0, 0, 0, 1),
-                                 text="  " + str(k) + ") " +
-                                      + processLongTitle(str(i[5]), 20) +
-                                      + " : " + processLongTitle(str(i[4]), 20),
-                                 text_size=(self.width, 30),
-                                 halign="left",
-                                 background_normal="")
+                                color=(0, 0, 0, 1),
+                                text = "  " + str(k) + ") " + processLongTitle(str(i[5]), 20) + " : " + processLongTitle(str(i[4]), 20),
+                                text_size = (self.width, 30),
+                                halign="left",
+                                background_normal="")
 
                     m_book_id = i[2]
                     Btn.bind(on_release=lambda x,
