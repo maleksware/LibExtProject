@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 <Annot>
     name: "Annot"
     id: "Annot"
@@ -10,6 +11,11 @@
     id: "Loading"
     Label:
         text: "Loading"
+    MDSpinner:
+        size_hint: None,None
+        size: dp(46), dp(46)
+        pos_hint:{'center_x': .5,'center_y': .5}
+        active:True
 
 <MyBooks>
     bookLayout: bookLayout
@@ -644,35 +650,64 @@
         root.checkToLoading()
 
     GridLayout:
-        rows: 5
-        cols: 1
-        row_default_height: 160
-
-        MDLabel:
-            text: "¬ход"
-            font_style: 'H4'
+        cols:1
+        MDToolbar:
+            id:bar
+            title: "Welcome to the Bookcrossing!"
             halign: 'center'
-            size_hint: 0.4, 0.1
-
-
+            size_hint: 0.4, None
+            md_bg_color: .2, .2, .2, 1
+            spacing:65
+            font_size: 50
+    MDCard:
+        orientation: 'vertical'
+        padding:'8dp'
+        size_hint: 0.8, None
+        size: "350dp", "500dp"
+        pos_hint: {"center_x": .5,"center_y": .5}
+        MDLabel:
+            text: 'Sign in'
+            halign:'center'
+            size_hint_y: None
+            font_style: 'Subtitle1'
+            font_size: 30
+        MDSeparator:
+            height: "1dp"
+        MDLabel:
+            text: 'Write your email here'
+            size_hint: 0.8,None
+            pos_hint: {"center_x": .45}
         MDTextFieldRound:
             id: mail
-            font_size: 10
+            font_size: 20
             icon_left: "email"
+            size_hint: 0.8,None
             color_active: 1, 1, 1, 1
+            pos_hint: {"center_x": .5,"center_y": .1}
             normal_color: 1, 1, 1, 1
-            size_hint: (0.4, None)
             on_text_validate: root.switch(self.text)
-
-
+        MDLabel:
+            size:(0,0)
+            size_hint: None,None
+        GridLayout:
+            cols:2
+            halign:'center'
+            padding:40
+            spacing:80
+            MDRaisedButton:
+                text:'Sign in'
+                size_hint:None,0.1
+                md_bg_color:0,0,1,1
+                on_release:
+                    root.switch(self.text)
+            MDRaisedButton:
+                text:'Sign up'
+                size_hint:None,0.1
+                md_bg_color:0,0,0,1
+                pos_hint: {"center_x": 1,"center_y": .1}
+                on_release:root.manager.current = ('SignUp')
         Widget:
             size_hint: (0.2, 1)
-
-
-
-
-
-
 
       #  Image:
       #      source:'book.png'
