@@ -2,7 +2,6 @@
 
 # TODO: Remove Spaghetti Code
 # TODO: Settings content
-# TODO: Create camera
 # TODO: Create testcases for testing
 # TODO: Add ranks for users
 # TODO: Send the db to a server
