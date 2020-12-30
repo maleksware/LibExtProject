@@ -15,7 +15,6 @@
 # TODO: take_book function
 # TODO: Backticks in execSQL function calls
 
-
 # Kivy imports
 
 import kivy
