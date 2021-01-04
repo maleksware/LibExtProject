@@ -1,4 +1,4 @@
-# -*- coding: utf8 -*-
+# -*- coding: cp1251 -*-
 <Annot>
     name: "Annot"
     id: "Annot"
@@ -18,6 +18,8 @@
         active:True
 
 <MyBooks>
+    mainscreen: mainscreen
+    id: mainscreen
     bookLayout: bookLayout
     name: "MyBooks"
     on_enter:
@@ -27,12 +29,15 @@
     BoxLayout:
 
         MDBottomNavigation:
+            id: bnav
             panel_color: .2, .2, .2, 1
-            size_hint:None,None
-            size:(450,800)
+            size_hint: None, None
+            size: (450, 800)
             MDBottomNavigationItem:
+                on_tab_press:
+                    root.my_book(self)
                 name: 'MyBooks'
-                text: 'MyBooks'
+                text: 'Мои книги'
                 icon: 'library-books'
                 AnchorLayout:
                     anchor_x: 'right'
@@ -61,26 +66,30 @@
 
 
             MDBottomNavigationItem:
+                gt: gt
+                on_tab_press:
+                    self.gt.clearInput()
                 name: 'GiveAndTake'
-                text: 'Give&Take'
+                text: 'Обмен'
                 icon: 'reload'
-                GiveAndTake
+                GiveAndTake:
+                    id: gt
 
             MDBottomNavigationItem:
                 name: 'Add'
-                text: 'Add'
+                text: 'Добавить'
                 icon: 'plus-circle'
                 Add
 
             MDBottomNavigationItem:
                 name: 'Search'
-                text: 'Search'
+                text: 'Поиск'
                 icon: 'book-search'
                 Search
 
             MDBottomNavigationItem:
                 name: 'Set'
-                text: 'Settings'
+                text: 'Настройки'
                 icon: 'settings'
                 Set
 
@@ -253,7 +262,7 @@
             color: [0, 0, 0, 1]
             background_normal: ""
             size_hint:(0.4,None)
-            on_press:root.manager.current = 'AboutAttachment'
+            on_press:root.manager.current = 'AboutTheApp'
         Button:
             text:'Information'
             background_color: [0.9, 0.9, 0.9, 1]
@@ -268,7 +277,7 @@
             size_hint:(0.4,None)
             background_normal: ""
             on_press:root.manager.current = 'AboutDevelopers'
-  
+
 
 <Profile>
     nameLabel: nameLabel
@@ -458,10 +467,10 @@
             size_hint:0.4,None
             font_size:30
 
-<AboutAttachment>
+<AboutTheApp>
     on_enter:
         root.stack()
-    name:'AboutAttachment'
+    name:'AboutTheApp'
     AnchorLayout:
         anchor_x:'left'
         anchor_y:'top'
@@ -786,7 +795,7 @@
     UpdateProfile:
     AboutProblem:
     Spravka:
-    AboutAttachment:
+    AboutTheApp:
     Information:
     AboutDevelopers:
     Ok:

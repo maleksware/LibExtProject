@@ -8,12 +8,13 @@
 # TODO: Recreate MyBooks and Search structure
 # TODO: Repaint arrows
 # TODO: GiveAndTake options
-# TODO: Recreate Login screen
 # TODO: Interface Update
-# TODO: Add the option of taking books right from the modal window
 # TODO: Add User and ISBN class support
-# TODO: take_book function
 # TODO: Backticks in execSQL function calls
+# TODO: Add Log files
+# TODO: Deal with all warnings
+# TODO: Add documentation and docstrings
+# TODO: Add "Choose station" popup
 
 # Kivy imports
 
@@ -28,12 +29,11 @@ from kivy.uix.widget import Widget
 from kivy.clock import Clock
 from kivymd.uix.dialog import MDDialog
 from kivy.core.window import Window
-from kivymd.uix.button import MDFlatButton
+from kivymd.uix.button import MDFlatButton, MDRaisedButton
 from kivymd.toast import toast
 from kivymd.uix.label import MDLabel
 import pymysql
 import re
-import time
 # No imports after this line!
 
 
@@ -78,7 +78,12 @@ def cwq(string):
     return '"' + str(string) + '"'
 
 
-def execSQL(sql, one=True, debugOutput=False):
+def execSQL(sql, one=True, debugOutput=False, args=[]):
+    if args:
+        for i in range(len(args)):
+            args[i] = cwq(args[i])
+        sql = sql.format(*args)
+
     if debugOutput:
         print(sql)
     connection = pymysql.connect(host="localhost",
@@ -86,6 +91,7 @@ def execSQL(sql, one=True, debugOutput=False):
                                  password="userpass1234",
                                  db="bookcrossing",
                                  cursorclass=pymysql.cursors.Cursor)
+
     try:
         with connection.cursor() as cursor:
             cursor.execute(sql)
@@ -98,7 +104,6 @@ def execSQL(sql, one=True, debugOutput=False):
     except Exception as e:
         print("AN EXCEPTION OCCURRED WHILE REQUESTING:")
         print(e)
-
     finally:
         connection.close()
 
@@ -158,10 +163,6 @@ def reduceISBN(isbn):
     return reducedISBN
 
 
-def take_book():
-    pass
-
-
 def encodeTagsLine(tags):
 
     tags = tags.split()
@@ -218,20 +219,7 @@ def modalview(b_id):
 
 
 def modal():
-    book_id = App.get_running_app().current_book_id
-    if book_id == "" or book_id is None:
-        return
-    book = modalview(book_id)
-    if book is None:
-        return None
-    bookModal = MDDialog(title=book[4],
-                         type="custom",
-                         text=generateModalTextBook(book),
-                         buttons=[MDFlatButton(text="Take this book",
-                                               on_press=take_book),
-                                  MDFlatButton(text="OK")],
-                         size_hint=(0.7, None))
-    bookModal.open()
+    App.get_running_app().show_book_popup()
 
 
 def f_btn_book(self, a_id):
@@ -354,10 +342,84 @@ def upgradeRank(rank, count=1):
 
 
 def getNameAndSurname(email):
-    name, surname = tuple(execSQL("SELECT name, surname " +
-                                  "FROM users WHERE email = " +
-                                  cwq(email)))
+    name, surname = tuple(execSQL("SELECT name, surname "
+                                  "FROM users WHERE email = "
+                                  + cwq(email)))
     return name, surname
+
+
+def give_book(book, user, type="book_id"):
+    if App.get_running_app().dialog:
+        App.get_running_app().close_dlg("instance")
+
+    print("giving...")
+    try:
+        if type == "auto":
+            if isISBN(book):
+                type = "isbn"
+            else:
+                type = "id"
+        if type == "isbn":
+            execSQL('UPDATE books SET owner = "None", '
+                    + 'station = "566" WHERE isbn = {}',
+                    args=[book],
+                    debugOutput=True)
+        elif type == "book_id":
+            execSQL('UPDATE books SET owner = "None", '
+                    + 'station = "566" WHERE book_id = {}',
+                    args=[book],
+                    debugOutput=True)
+    except Exception as e:
+        print("TAKE_BOOK EXCEPTION:", e)
+    toast("Successfully!")
+
+
+def take_book(book, user, type="book_id"):
+    if App.get_running_app().dialog:
+        App.get_running_app().close_dlg("instance")
+
+    print("taking...")
+    try:
+        if type == "auto":
+            if isISBN(book):
+                type = "isbn"
+            else:
+                type = "id"
+        if type == "isbn":
+            execSQL('UPDATE books SET owner = {}, '
+                    + 'station = "The book was taken" WHERE isbn = {}',
+                    args=[user, book],
+                    debugOutput=True)
+        elif type == "book_id":
+            execSQL('UPDATE books SET owner = {}, '
+                    + 'station = "The book was taken" WHERE book_id = {}',
+                    args=[user, book],
+                    debugOutput=True)
+    except Exception as e:
+        print("TAKE_BOOK EXCEPTION:", e)
+
+    toast("Successfully!")
+
+
+def bookOnStation(book, type="isbn"):
+    try:
+        if type == "auto":
+            if isISBN(book):
+                type = "isbn"
+            else:
+                type = "id"
+        if type == "isbn":
+            place = execSQL('SELECT station FROM books WHERE isbn = {}',
+                            args=[book])
+        elif type == "book_id":
+            place = execSQL('SELECT station FROM books WHERE book_id = {}',
+                            args=[book])
+        if place[0] == "The book was taken":
+            return False
+        else:
+            return True
+    except Exception as e:
+        print("TAKE_BOOK EXCEPTION:", e)
 # No functions after this line!
 
 # Classes of the screens
@@ -366,6 +428,7 @@ def getNameAndSurname(email):
 class Annot(Screen):
     def on_enter(self):
         Clock.schedule_once(self.load)
+        print(getNameAndSurname("gg@gg.ru"))
 
     def load(self, dt):
         global dataLoaded
@@ -423,8 +486,6 @@ class Login(Screen):
         print(user[-1])
 
 
-
-
 class MyBooks(Screen):
     def stack(self):
         App.get_running_app().screenStack.append("MyBooks")
@@ -442,11 +503,11 @@ class MyBooks(Screen):
                 for i in books:
                     k = k + 1
                     Btn = Button(background_color=[0.9, 0.9, 0.9, 1],
-                                color=(0, 0, 0, 1),
-                                text = "  " + str(k) + ") " + processLongTitle(str(i[5]), 20) + " : " + processLongTitle(str(i[4]), 20),
-                                text_size = (self.width, 30),
-                                halign="left",
-                                background_normal="")
+                                 color=(0, 0, 0, 1),
+                                 text="  " + str(k) + ") " + processLongTitle(str(i[5]), 20) + " : " + processLongTitle(str(i[4]), 20),
+                                 text_size=(self.width, 30),
+                                 halign="left",
+                                 background_normal="")
 
                     m_book_id = i[2]
                     Btn.bind(on_release=lambda x,
@@ -481,7 +542,7 @@ class GiveAndTake(Screen):
         station = self.code.text
         try:
             if station == "":
-                self.take()
+                self.test_take()
                 return
 
             isbn_ok = isValid(book)
@@ -512,10 +573,10 @@ class GiveAndTake(Screen):
                                                              "station.")
                             self.code.text = ""
                             return
-                        execSQL('UPDATE books SET owner = "None" ' +
-                                'WHERE isbn = ' + cwq(book))
-                        execSQL('UPDATE books SET station = ' + cwq(station) +
-                                ' WHERE isbn = ' + cwq(book))
+                        execSQL('UPDATE books SET owner = "None" '
+                                + 'WHERE isbn = ' + cwq(book))
+                        execSQL('UPDATE books SET station = ' + cwq(station)
+                                + ' WHERE isbn = ' + cwq(book))
                         self.clearInput()
 
                         toast("Successfully!")
@@ -655,6 +716,11 @@ class GiveAndTake(Screen):
             App.get_running_app().show_popup("You didn't write all.")
         except UnboundLocalError:
             return
+
+    def test_take(self):
+        book = self.isbn.text
+        take_book(book, App.get_running_app().email, type="isbn")
+        print("took")
 
 
 class Add(Screen):
@@ -813,23 +879,23 @@ class SignUp(Screen):
         strPattern = '(^|\\s)[-a-z0-9_.]+@([-a-z0-9]+\\.)+[a-z]{2,6}(\\s|$)'
         pattern = re.compile(strPattern)
         is_valid = pattern.match(self.mail.text)
-        m_record = execSQL('SELECT * FROM users WHERE email = ' +
-                           cwq(self.mail.text))
+        m_record = execSQL('SELECT * FROM users WHERE email = '
+                           + cwq(self.mail.text))
         if m_record is None:
-            if not (self.familia.text and
-                    self.nam.text and
-                    self.mail.text and
-                    self.class1.text):
+            if not (self.familia.text
+                    and self.nam.text
+                    and self.mail.text
+                    and self.class1.text):
                 App.get_running_app().show_popup("You didn't write all.")
             elif not is_valid:
                 self.mail.text = ''
                 App.get_running_app().show_popup("Your email isn't correct")
             elif self.class1.text in ["5", "6", "7", "8", "9", "10", "11"]:
                 try:
-                    execSQL('INSERT INTO users VALUES (' + cwq(self.nam.text) +
-                            ', ' + cwq(self.familia.text) + ', ' +
-                            cwq(self.class1.text) + ', ' +
-                            cwq(self.mail.text) + ', ' + cwq("0") + ')')
+                    execSQL('INSERT INTO users VALUES (' + cwq(self.nam.text)
+                            + ', ' + cwq(self.familia.text) + ', '
+                            + cwq(self.class1.text) + ', '
+                            + cwq(self.mail.text) + ', ' + cwq("0") + ')')
                 except pymysql.Error as err:
                     App.get_running_app().show_popup("Database Error")
                     print(err)
@@ -838,8 +904,8 @@ class SignUp(Screen):
                     App.get_running_app().show_popup('Hello ' + self.nam.text)
             else:
                 self.class1.text = ''
-                App.get_running_app().show_popup("Write the number of " +
-                                                 "your class.")
+                App.get_running_app().show_popup("Write the number of "
+                                                 + "your class.")
         else:
             self.mail.text = ''
             App.get_running_app().show_popup("This user already exists.")
@@ -960,13 +1026,13 @@ class Spravka(Screen):
         App.get_running_app().screenStack.append("Spravka")
 
 
-class AboutAttachment(Screen):
+class AboutTheApp(Screen):
     def back(self):
         del App.get_running_app().screenStack[-1]
         self.manager.current = App.get_running_app().screenStack[-1]
 
     def stack(self):
-        App.get_running_app().screenStack.append("AboutAttachment")
+        App.get_running_app().screenStack.append("AboutTheApp")
 
 
 class Information(Screen):
@@ -1095,17 +1161,44 @@ class Screens(ScreenManager):
 class Bookcrossing(MDApp):
     current_book_id = ""
 
+    def show_book_popup(self):
+        user = App.get_running_app().email
+        book_id = App.get_running_app().current_book_id
+        if book_id == "" or book_id is None:
+            return None
+        book = modalview(book_id)
+        if book is None:
+            return None
+
+        if bookOnStation(book_id, type="book_id"):
+            actionButton = MDRaisedButton(
+                               text="Take this book",
+                               on_release=lambda x: take_book(book_id, user))
+        else:
+            actionButton = MDRaisedButton(
+                              text="Give this book",
+                              on_release=lambda x: give_book(book_id, user))
+
+        self.dialog = MDDialog(title=book[4],
+                               type="custom",
+                               text=generateModalTextBook(book),
+                               buttons=[actionButton,
+                                        MDFlatButton(text="OK",
+                                                     on_press=self.close_dlg)],
+                               size_hint=(0.7, 0.5))
+        self.dialog.open()
+
     def show_popup(self, text, size=0.5):
-        self.popup = MDDialog(
+        self.dialog = MDDialog(
             title=text,
             buttons=[MDFlatButton(text="OK",
                                   text_color=self.theme_cls.primary_color,
-                                  on_release=self.close_popup)],
+                                  on_release=self.close_dlg)],
             size_hint_x=size)
-        self.popup.open()
+        self.dialog.open()
 
-    def close_popup(self, instance):
-        self.popup.dismiss()
+    def close_dlg(self, instance):
+        self.dialog.dismiss()
 
     def build(self):
         self.m = Screens(transition=NoTransition())
