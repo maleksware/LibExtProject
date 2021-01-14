@@ -5,15 +5,13 @@
 # TODO: Create testcases for testing
 # TODO: Add ranks for users
 # TODO: Recreate MyBooks and Search structure
-# TODO: GiveAndTake options
 # TODO: Interface Update
 # TODO: Add User and ISBN class support
 # TODO: Backticks in execSQL function calls
 # TODO: Add Log files
 # TODO: Add documentation and docstrings
-# TODO: Add "Choose station" dialog
 # TODO: Rewrite execSQL calls
-# TODO: Add variables for popular messages such as "The ISBN isn't correct"
+# TODO: Русифицировать приложение и вообще все
 
 # Kivy imports
 
@@ -21,6 +19,7 @@ import kivy
 from kivymd.app import MDApp
 from kivy.config import Config
 from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
 from kivy.uix.label import Label
 from kivy.uix.button import Button
@@ -40,14 +39,12 @@ import re
 Config.set("graphics", "resizable", "false")
 Config.set("graphics", "width", 450)
 Config.set("graphics", "height", 800)
-kivy.require("1.11.1")
+kivy.require("2.0.0")
 Window.size = (450, 800)
 # No system settings and configs after this line!
 
 
 # Functions
-
-
 def generateModalTextBook(book):
     owner = book[0]
     id = book[2]
@@ -85,7 +82,7 @@ def execSQL(sql, one=True, debugOutput=False, args=[]):
 
     if debugOutput:
         print(sql)
-    connection = pymysql.connect(host="192.168.1.72",
+    connection = pymysql.connect(host="localhost",
                                  user="libextapp",
                                  password="userpass1234",
                                  db="bookcrossing",
@@ -202,7 +199,7 @@ def my_books():
         result = execSQL(request, one=False)
 
     except pymysql.Error as err:
-        App.get_running_app().show_dialog("Database Error:" + str(err))
+        App.get_running_app().show_dialog(DBERR + str(err))
 
     return result
 
@@ -213,7 +210,7 @@ def modalview(b_id):
     try:
         result = execSQL(request)
     except pymysql.Error as err:
-        App.get_running_app().show_dialog("Database Error:" + str(err))
+        App.get_running_app().show_dialog(DBERR + str(err))
     return result
 
 
@@ -347,11 +344,14 @@ def getNameAndSurname(email):
     return name, surname
 
 
-def give_book(book, user, type="book_id"):
+def give_book(book, station, type="book_id", show_station_dialog=False):
+    print("giving")
     if App.get_running_app().dialog:
         App.get_running_app().close_dlg("instance")
 
-    print("giving...")
+    if show_station_dialog:
+        App.get_running_app().show_station_text_dialog()
+
     try:
         if type == "auto":
             if isISBN(book):
@@ -360,24 +360,24 @@ def give_book(book, user, type="book_id"):
                 type = "id"
         if type == "isbn":
             execSQL('UPDATE books SET owner = "None", '
-                    + 'station = "566" WHERE isbn = {}',
-                    args=[book],
+                    + 'station = {} WHERE isbn = {}',
+                    args=[station, book],
                     debugOutput=True)
         elif type == "book_id":
             execSQL('UPDATE books SET owner = "None", '
-                    + 'station = "566" WHERE book_id = {}',
-                    args=[book],
+                    + 'station = {} WHERE book_id = {}',
+                    args=[station, book],
                     debugOutput=True)
     except Exception as e:
         print("TAKE_BOOK EXCEPTION:", e)
-    toast("Successfully!")
+    toast(SUCCESS)
+    App.get_running_app().sm.MyBooks.bnav.refresh_tabs()
 
 
 def take_book(book, user, type="book_id"):
     if App.get_running_app().dialog:
         App.get_running_app().close_dlg("instance")
 
-    print("taking...")
     try:
         if type == "auto":
             if isISBN(book):
@@ -397,7 +397,7 @@ def take_book(book, user, type="book_id"):
     except Exception as e:
         print("TAKE_BOOK EXCEPTION:", e)
 
-    toast("Successfully!")
+    toast(SUCCESS)
 
 
 def bookOnStation(book, type="isbn"):
@@ -418,12 +418,11 @@ def bookOnStation(book, type="isbn"):
         else:
             return True
     except Exception as e:
-        print("TAKE_BOOK EXCEPTION:", e)
+        print("BOOK ON STATION EXCEPTION:", e)
 # No functions after this line!
 
+
 # Classes of the screens
-
-
 class Annot(Screen):
     def on_enter(self):
         Clock.schedule_once(self.load)
@@ -466,10 +465,10 @@ class Login(Screen):
         m_record = execSQL(request)
         if m_record is None:
             self.mail.text = ''
-            App.get_running_app().show_dialog('Email not found')
+            App.get_running_app().show_dialog(EMNF)
         else:
             if not self.mail.text:
-                App.get_running_app().show_dialog('Your email is not correct')
+                App.get_running_app().show_dialog(EMNC)
             else:
                 self.defineRank()
                 self.manager.current = 'MyBooks'
@@ -554,14 +553,10 @@ class GiveAndTake(Screen):
                     request = 'SELECT * FROM books WHERE isbn = ' + cwq(book)
                     result = execSQL(request)
                     if result is None:
-                        App.get_running_app().show_dialog("No such book"
-                                                          + "found :(")
+                        App.get_running_app().show_dialog(BNF)
                         return
                     elif result[0] != mail:
-                        App.get_running_app().show_dialog("This book isn't "
-                                                          "yours!\nYou can log"
-                                                          "in or sign up in "
-                                                          "Settings")
+                        App.get_running_app().show_dialog(NOTYOURS)
                         return
                     else:
                         request = 'SELECT * FROM stations WHERE id = ' + \
@@ -569,9 +564,7 @@ class GiveAndTake(Screen):
                         dataStation = execSQL(request, one=False)
 
                         if dataStation == ():
-                            App.get_running_app().show_dialog("Hmm,\nwe didn't"
-                                                              " find that "
-                                                              "station.")
+                            App.get_running_app().show_dialog(STANF)
                             self.code.text = ""
                             return
                         execSQL('UPDATE books SET owner = "None" '
@@ -580,29 +573,26 @@ class GiveAndTake(Screen):
                                 + ' WHERE isbn = ' + cwq(book))
                         self.clearInput()
 
-                        toast("Successfully!")
+                        toast(SUCCESS)
                         return
                 else:
-                    App.get_running_app().show_dialog("The ISBN isn't correct")
+                    App.get_running_app().show_dialog(ISBNNC)
                     return
             elif isID(book):
                 c_record = execSQL('SELECT * FROM books WHERE book_id = '
                                    + cwq(book))
                 if c_record is None:
-                    App.get_running_app().show_dialog("No such book found :(")
+                    App.get_running_app().show_dialog(BNF)
                     return
                 elif c_record[0] != mail:
-                    App.get_running_app().show_dialog("This book isn't yours!"
-                                                      + " \nYou can log in or "
-                                                      + "sign up in Settings")
+                    App.get_running_app().show_dialog(NOTYOURS)
                     return
                 else:
                     dataStation = execSQL('SELECT * FROM stations WHERE id ='
                                           + cwq(station), one=False)
 
                     if dataStation == ():
-                        App.get_running_app().show_dialog("Hmm,\nwe didn't fin"
-                                                          + "d that station.")
+                        App.get_running_app().show_dialog(STANF)
                         self.code.text = ""
                         return
                     execSQL('UPDATE books SET owner = "None" WHERE book_id ='
@@ -610,20 +600,18 @@ class GiveAndTake(Screen):
                     execSQL('UPDATE books SET station = ' + cwq(station)
                             + ' WHERE book_id = ' + cwq(book))
                     self.clearInput()
-                    toast("Successfully!")
+                    toast(SUCCESS)
                     return
             else:
-                App.get_running_app().show_dialog("The ID or ISBN aren't "
-                                                  + "correct.")
+                App.get_running_app().show_dialog(IDISBNNC)
                 return
 
         except AttributeError:
             self.manager.current = 'Login'
-            App.get_running_app().show_dialog("You didn't sign up or sign in."
-                                              + " Please do it")
+            App.get_running_app().show_dialog(NOTLOG)
             return
         except IndexError:
-            App.get_running_app().show_dialog("You didn't write something.")
+            App.get_running_app().show_dialog(NOTFILLED)
             return
         except UnboundLocalError:
             return
@@ -631,7 +619,7 @@ class GiveAndTake(Screen):
     def take(self):
         book = self.isbn.text
         if book == "":
-            toast("You didn't write something")
+            toast(NOTFILLED)
         try:
             if isISBN(book):
                 if isValid(book):
@@ -639,8 +627,7 @@ class GiveAndTake(Screen):
                     result = execSQL('SELECT * FROM books WHERE isbn = '
                                      + cwq(book))
                     if result is None:
-                        App.get_running_app().show_dialog("This book does"
-                                                          + "n't exist")
+                        App.get_running_app().show_dialog(BNF)
                     else:
                         try:
                             if result[0] == "None":
@@ -651,34 +638,26 @@ class GiveAndTake(Screen):
                                         + "The book was taken" 'WHERE isbn = '
                                         + cwq(str(book)))
                                 self.clearInput()
-                                toast("Successfully!")
+                                toast(SUCCESS)
                                 return
                             elif not hasThisBook(mail, book, reqType="isbn"):
-                                App.get_running_app().show_dialog("This book "
-                                                                  "isn't yours"
-                                                                  "! \nYou can"
-                                                                  " log in or "
-                                                                  "sign up in "
-                                                                  "settings.")
+                                App.get_running_app().show_dialog(NOTYOURS)
                                 return
                             else:
-                                App.get_running_app().show_dialog("You "
-                                                                  "already "
-                                                                  "have this "
-                                                                  "book!")
+                                App.get_running_app().show_dialog(ALRHAS)
                         except pymysql.Error as err:
-                            App.get_running_app().show_dialog("Database Error")
+                            App.get_running_app().show_dialog(DBERR)
                             print(err)
 
                 else:
-                    App.get_running_app().show_dialog("The ISBN isn't correct")
+                    App.get_running_app().show_dialog(ISBNNC)
                     return
             elif isID(book):
                 mail = App.get_running_app().email
                 result = execSQL('SELECT * FROM books WHERE book_id = '
                                  + cwq(str(book)))
                 if result is None:
-                    App.get_running_app().show_dialog("Book not found :(")
+                    App.get_running_app().show_dialog(BNF)
                 else:
                     try:
                         if result[0] == "None":
@@ -690,31 +669,23 @@ class GiveAndTake(Screen):
                                     + 'WHERE book_id = '
                                     + cwq(str(book)))
                             self.isbn.text = ''
-                            toast("Successfully!")
+                            toast(SUCCESS)
                             return
                         elif not hasThisBook(mail, book, reqType="book_id"):
-                            App.get_running_app().show_dialog("This book "
-                                                              "isn't yours!"
-                                                              " \nYou can "
-                                                              "log in or "
-                                                              "sign up in "
-                                                              "settings.")
+                            App.get_running_app().show_dialog(NOTYOURS)
                         else:
-                            App.get_running_app().show_dialog("You already hav"
-                                                              + "e this book!")
+                            App.get_running_app().show_dialog(ALRHAS)
                     except pymysql.Error as err:
-                        App.get_running_app().show_dialog("Database Error")
+                        App.get_running_app().show_dialog(DBERR)
                         print(err)
 
             else:
-                App.get_running_app().show_dialog("The ID or ISBN isn't "
-                                                  + "correct")
+                App.get_running_app().show_dialog(IDISBNNC)
         except AttributeError:
             self.manager.current = 'Login'
-            App.get_running_app().show_dialog("You didn't sign up or "
-                                              + "sign in. Please do it")
+            App.get_running_app().show_dialog(NOTLOG)
         except IndexError:
-            App.get_running_app().show_dialog("You didn't write all.")
+            App.get_running_app().show_dialog(NOTFILLED)
         except UnboundLocalError:
             return
 
@@ -749,14 +720,12 @@ class Add(Screen):
                     and self.description.text
                     and self.tags.text
                     and self.kod.text):
-                App.get_running_app().show_dialog("You didn't write "
-                                                  + "something.")
+                App.get_running_app().show_dialog(NOTFILLED)
             elif not isbn_ok:
                 self.isbn.text = ''
-                App.get_running_app().show_dialog("Your isbn isn't correct")
+                App.get_running_app().show_dialog(ISBNNC)
             elif s_data == []:
-                App.get_running_app().show_dialog("Hmm,\n we didn't "
-                                                  + "find this station")
+                App.get_running_app().show_dialog(STANF)
                 self.kod.text = ''
                 return
             else:
@@ -779,14 +748,13 @@ class Add(Screen):
                                 + cwq(tags) + ', '
                                 + cwq(self.kod.text) + ') ')
 
-                        toast("Successfully!")
+                        toast(SUCCESS)
                         return
                     else:
-                        App.get_running_app().show_dialog("This book alrea"
-                                                          + "dy exists")
+                        App.get_running_app().show_dialog(ALREXS)
 
                 except pymysql.Error as err:
-                    App.get_running_app().show_dialog("Database Error")
+                    App.get_running_app().show_dialog(DBERR)
                     print(err)
                 else:
                     self.clearInput()
@@ -794,19 +762,9 @@ class Add(Screen):
             print(Error)
             self.clearInput()
             self.manager.current = 'Login'
-            App.get_running_app().show_dialog("You didn't sign up or "
-                                              + "sign in. Please do it")
+            App.get_running_app().show_dialog(NOTLOG)
         except IndexError:
-            App.get_running_app().show_dialog("You didn't write all.")
-
-
-class Ok(Screen):
-    def stack(self):
-        App.get_running_app().screenStack.append("Ok")
-
-    def back(self):
-        del App.get_running_app().screenStack[-1]
-        self.manager.current = App.get_running_app().screenStack[-1]
+            App.get_running_app().show_dialog(NOTFILLED)
 
 
 class Search(Screen):
@@ -888,10 +846,10 @@ class SignUp(Screen):
                     and self.nam.text
                     and self.mail.text
                     and self.class1.text):
-                App.get_running_app().show_dialog("You didn't write all.")
+                App.get_running_app().show_dialog(NOTFILLED)
             elif not is_valid:
                 self.mail.text = ''
-                App.get_running_app().show_dialog("Your email isn't correct")
+                App.get_running_app().show_dialog(EMNC)
             elif self.class1.text in ["5", "6", "7", "8", "9", "10", "11"]:
                 try:
                     execSQL('INSERT INTO users VALUES (' + cwq(self.nam.text)
@@ -899,18 +857,17 @@ class SignUp(Screen):
                             + cwq(self.class1.text) + ', '
                             + cwq(self.mail.text) + ', ' + cwq("0") + ')')
                 except pymysql.Error as err:
-                    App.get_running_app().show_dialog("Database Error")
+                    App.get_running_app().show_dialog(DBERR)
                     print(err)
                 else:
                     self.manager.current = 'MyBooks'
                     App.get_running_app().show_dialog('Hello ' + self.nam.text)
             else:
                 self.class1.text = ''
-                App.get_running_app().show_dialog("Write the number of "
-                                                  + "your class.")
+                App.get_running_app().show_dialog(NOTFILLED)
         else:
             self.mail.text = ''
-            App.get_running_app().show_dialog("This user already exists.")
+            App.get_running_app().show_dialog(ALREXSUSER)
 
 
 class Profile(Screen):
@@ -933,7 +890,7 @@ class Profile(Screen):
         self.manager.current = "Login"
 
     def getRank(self):
-        return "levo"
+        pass
 
     def initProfile(self):
         pair = getNameAndSurname(App.get_running_app().email)
@@ -963,14 +920,14 @@ class UpdateProfile(Screen):
         m_record = execSQL('SELECT * FROM users WHERE email = '
                            + cwq(self.mail.text))
         if m_record is None:
-            App.get_running_app().show_dialog("This user doesn't exist.")
+            App.get_running_app().show_dialog(EMNF)
         else:
             if not (self.familia.text and self.nam.text
                     and self.mail.text and self.class1.text):
-                App.get_running_app().show_dialog("You didn't write all.")
+                App.get_running_app().show_dialog(NOTFILLED)
             elif not email_ok:
                 self.mail.text = ''
-                App.get_running_app().show_dialog('Your email is not correct')
+                App.get_running_app().show_dialog(EMNC)
             elif self.class1.text in list("123456789") + ["10", "11"]:
                 try:
                     execSQL('UPDATE users SET name = ' + cwq(self.nam.text)
@@ -979,13 +936,12 @@ class UpdateProfile(Screen):
                             + ', email = ' + cwq(self.mail.text)
                             + ' WHERE email = ' + cwq(self.mail.text))
                 except pymysql.Error:
-                    App.get_running_app().show_dialog("Database Error")
+                    App.get_running_app().show_dialog(DBERR)
 
                 else:
-                    App.get_running_app().show_dialog('Saved!')
+                    App.get_running_app().show_dialog(SVD)
             else:
-                App.get_running_app().show_dialog("Write the number "
-                                                  + "of your class.")
+                App.get_running_app().show_dialog(NOTFILLED)
 
 
 class AboutProblem(Screen):
@@ -1007,14 +963,13 @@ class AboutProblem(Screen):
                     execSQL('INSERT INTO feedback VALUES (' + cwq(mail)
                             + ', ' + cwq(text) + ')')
                 except pymysql.Error:
-                    App.get_running_app().show_dialog("Database Error")
+                    App.get_running_app().show_dialog(DBERR)
                 else:
                     self.feedback.text = ''
                     App.get_running_app().show_dialog("Your feedback was sent")
         except AttributeError:
             self.manager.current = 'Login'
-            App.get_running_app().show_dialog("You didn't sign up or sign in."
-                                              + " Please do it")
+            App.get_running_app().show_dialog(NOTLOG)
         except Exception as e:
             print(e)
 
@@ -1095,16 +1050,17 @@ class DeleteProfile(Screen):
             except Exception as e:
                 App.get_running_app().screenStack = []
                 print(e)
-                App.get_running_app().show_dialog("An error occured.")
+                App.get_running_app().show_dialog(DBERR)
                 self.manager.current = "Set"
         else:
             App.get_running_app().show_dialog("""Please click this checkbox to
                                                 delete\nthe profile.""")
-
-
 # No screen classes after this line!
 
+
 # Widget and layout classes
+class TextDialogContent(BoxLayout):
+    pass
 
 
 class CustomAppException(Exception):
@@ -1129,11 +1085,28 @@ class User():
 
     def getNameAndSurname(self):
         pass
-
 # No widget and layout classes after this line!
 
 
 # Global variables with their comments
+ISBNNF = "The ISBN was not found"
+ISBNNC = "The ISBN is not correct"
+IDNF = "The ID was not found"
+IDNC = "The ID is not correct"
+STANF = "Station not found"
+BNF = "Book not found"
+EMNF = "Email not found"
+EMNC = "Email not correct"
+NOTYOURS = "This book isn't yours! You can log in or sign up in Settings."
+NOTLOG = "Please login"
+NOTFILLED = "You didn't write something"
+ALRHAS = "You already have this book"
+SUCCESS = "Successfully!"
+DBERR = "Database error"
+IDISBNNC = "The ID or ISBN isn't correct"
+ALREXS = "This book already exists"
+ALREXSUSER = "This user already exists"
+SVD = "Saved"
 firstEnter = True
 dataLoaded = False
 ranking = {10: "Student",
@@ -1142,11 +1115,11 @@ ranking = {10: "Student",
            200: "Top Reader",
            500: "Writer"}
 user = User()
+
+
 # No global vars after this line!
 # The Screenmanager
 # DO NOT MODIFY
-
-
 class Screens(ScreenManager):
     email = ''
 
@@ -1155,13 +1128,14 @@ class Screens(ScreenManager):
 
     def build(self):
         sm = ScreenManager()
-
-
+        App.get_running_app().sm = sm
 # The App class
 
 
 class Bookcrossing(MDApp):
     current_book_id = ""
+    text_dialog = None
+    dialog = None
 
     def show_book_dialog(self):
         user = App.get_running_app().email
@@ -1174,12 +1148,13 @@ class Bookcrossing(MDApp):
 
         if bookOnStation(book_id, type="book_id"):
             actionButton = MDRaisedButton(
-                               text="Take this book",
-                               on_release=lambda x: take_book(book_id, user))
+                        text="Take this book",
+                        on_release=lambda x: take_book(book_id, user))
         else:
             actionButton = MDRaisedButton(
-                              text="Give this book",
-                              on_release=lambda x: give_book(book_id, user))
+                        text="Give this book",
+                        on_release=lambda x:
+                        App.get_running_app().show_station_text_dialog())
 
         self.dialog = MDDialog(title=book[4],
                                type="custom",
@@ -1199,11 +1174,31 @@ class Bookcrossing(MDApp):
             size_hint_x=size)
         self.dialog.open()
 
-    def show_text_dialog(self, text):
-        pass
+    def show_station_text_dialog(self):
+        OKButton = MDRaisedButton(
+            text="OK",
+            on_release=lambda x:
+                give_book(
+                    book=App.get_running_app().current_book_id,
+                    station=self.text_dialog.content_cls.text_field.text))
+
+        cancelButton = MDFlatButton(text="CANCEL",
+                                    on_release=self.close_station_text_dialog)
+
+        self.text_dialog = MDDialog(title="Station to use:",
+                                    type="custom",
+                                    content_cls=TextDialogContent(),
+                                    size_hint=(0.7, 0.4),
+                                    buttons=[cancelButton, OKButton])
+        self.text_dialog.open()
 
     def close_dlg(self, instance):
-        self.dialog.dismiss()
+        if self.dialog:
+            self.dialog.dismiss()
+
+    def close_station_text_dialog(self, instance):
+        if self.text_dialog:
+            self.text_dialog.dismiss()
 
     def build(self):
         self.m = Screens(transition=NoTransition())
