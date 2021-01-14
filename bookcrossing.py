@@ -371,7 +371,8 @@ def give_book(book, station, type="book_id", show_station_dialog=False):
     except Exception as e:
         print("TAKE_BOOK EXCEPTION:", e)
     toast(SUCCESS)
-    App.get_running_app().sm.MyBooks.bnav.refresh_tabs()
+    App.get_running_app().root.get_screen('MyBooks').bnav.switch_tab("MyBooks")
+    App.get_running_app().close_station_text_dialog("instance")
 
 
 def take_book(book, user, type="book_id"):
@@ -1177,10 +1178,10 @@ class Bookcrossing(MDApp):
     def show_station_text_dialog(self):
         OKButton = MDRaisedButton(
             text="OK",
-            on_release=lambda x:
-                give_book(
+            on_release=lambda x: Clock.schedule_once(
+                lambda x: give_book(
                     book=App.get_running_app().current_book_id,
-                    station=self.text_dialog.content_cls.text_field.text))
+                    station=self.text_dialog.content_cls.text_field.text), .1))
 
         cancelButton = MDFlatButton(text="CANCEL",
                                     on_release=self.close_station_text_dialog)
