@@ -1,4 +1,4 @@
-# -*- coding: cp1251 -*-
+# -*- coding: utf8 -*-
 
 # TODO: Remove Spaghetti Code
 # TODO: Settings content
@@ -11,7 +11,8 @@
 # TODO: Add Log files
 # TODO: Add documentation and docstrings
 # TODO: Rewrite execSQL calls
-# TODO: �������������� ���������� � ������ ���
+# TODO: Русификация приложения
+# TODO: Добавить on_text_validate в MDDialog
 
 # Kivy imports
 
@@ -54,19 +55,19 @@ def generateModalTextBook(book):
     tags = showTags(book[7])
     station = book[8]
     text = []
-    text.append("Author: " + author)
+    text.append("Автор: " + author)
     text.append("ISBN: " + isbn)
     text.append("ID: " + id)
-    text.append("Description: " + description)
-    text.append("Tags: " + tags)
+    text.append("Описание: " + description)
+    text.append("Теги: " + tags)
     if station != "The book was taken":
-        text.append("Station: " + station)
+        text.append("Станция: " + station)
 
     else:
         request = 'SELECT name, surname FROM users WHERE email = ' + cwq(owner)
         ownerText = execSQL(request)
         ownerText = " ".join(ownerText)
-        text.append("Owner: " + ownerText)
+        text.append("Владелец: " + ownerText)
     return "\n\n".join(text)
 
 
@@ -427,7 +428,6 @@ def bookOnStation(book, type="isbn"):
 class Annot(Screen):
     def on_enter(self):
         Clock.schedule_once(self.load)
-        print(getNameAndSurname("gg@gg.ru"))
 
     def load(self, dt):
         global dataLoaded
@@ -518,14 +518,13 @@ class MyBooks(Screen):
             else:
                 self.bookLayout.clear_widgets()
                 self.bookLayout.add_widget(MDLabel(
-                                        text="You have no books, \nbut "
-                                             + "you have time to take them!",
+                                        text="У вас нет книг,\nно есть время, "
+                                             "чтобы взять их!",
                                         font_size=20))
 
         except AttributeError:
             self.manager.current = 'Login'
-            App.get_running_app().show_dialog("You didn't sign up or "
-                                              + " sign in. Please do it")
+            App.get_running_app().show_dialog("Вы не выполнили вход")
         except Exception as e:
             print("AN EXCEPTION OCCURRED", e)
 
@@ -788,7 +787,7 @@ class Search(Screen):
             books = bookSearch(self.searchTextInput.text)
             if books != []:
 
-                self.bookLayout.add_widget(Label(text='Books:',
+                self.bookLayout.add_widget(Label(text='Книги:',
                                                  text_size=(self.width,
                                                             row_height),
                                                  font_size=20,
@@ -812,7 +811,7 @@ class Search(Screen):
                 self.bookLayout.add_widget(Widget())
             else:
                 self.bookLayout.clear_widgets()
-                self.bookLayout.add_widget(Label(text="Nothing was found"))
+                self.bookLayout.add_widget(Label(text="Ничего не найдено :-("))
 
         except UnboundLocalError:
             return
@@ -957,7 +956,7 @@ class AboutProblem(Screen):
         try:
             mail = App.get_running_app().email
             if not self.feedback.text:
-                App.get_running_app().show_dialog("Write your comment")
+                App.get_running_app().show_dialog("Напишите ваш отзыв")
             else:
                 try:
                     text = self.feedback.text
@@ -967,7 +966,7 @@ class AboutProblem(Screen):
                     App.get_running_app().show_dialog(DBERR)
                 else:
                     self.feedback.text = ''
-                    App.get_running_app().show_dialog("Your feedback was sent")
+                    App.get_running_app().show_dialog("Спасибо за отзыв!")
         except AttributeError:
             self.manager.current = 'Login'
             App.get_running_app().show_dialog(NOTLOG)
@@ -1016,9 +1015,9 @@ class Information(Screen):
             self.newsLayout.add_widget(Btn)
 
     def offer(self):
-        App.get_running_app().show_dialog(text="""To offer news, please, \n
-                                                contact us using \n
-                                                support@codinghurricane.org""",
+        App.get_running_app().show_dialog(text="""Чтобы предложить новость,
+                                                  свяжитесь с нами по почте
+                                                  makegym1505v2.0@gmail.com""",
                                           size=0.7)
 
 
@@ -1045,8 +1044,7 @@ class DeleteProfile(Screen):
             try:
                 userEmail = App.get_running_app().email
                 execSQL('DELETE FROM users WHERE email = ' + cwq(userEmail))
-                App.get_running_app().show_dialog("""The profile was\n
-                                                    successfully deleted!""")
+                App.get_running_app().show_dialog("Профиль успешно удален!")
                 self.manager.current = "Login"
             except Exception as e:
                 App.get_running_app().screenStack = []
@@ -1054,8 +1052,8 @@ class DeleteProfile(Screen):
                 App.get_running_app().show_dialog(DBERR)
                 self.manager.current = "Set"
         else:
-            App.get_running_app().show_dialog("""Please click this checkbox to
-                                                delete\nthe profile.""")
+            App.get_running_app().show_dialog("""Пожалуйста,
+                                                 отметьте галочку""")
 # No screen classes after this line!
 
 
@@ -1090,24 +1088,24 @@ class User():
 
 
 # Global variables with their comments
-ISBNNF = "The ISBN was not found"
-ISBNNC = "The ISBN is not correct"
-IDNF = "The ID was not found"
-IDNC = "The ID is not correct"
-STANF = "Station not found"
-BNF = "Book not found"
-EMNF = "Email not found"
-EMNC = "Email not correct"
-NOTYOURS = "This book isn't yours! You can log in or sign up in Settings."
-NOTLOG = "Please login"
-NOTFILLED = "You didn't write something"
-ALRHAS = "You already have this book"
-SUCCESS = "Successfully!"
-DBERR = "Database error"
-IDISBNNC = "The ID or ISBN isn't correct"
-ALREXS = "This book already exists"
-ALREXSUSER = "This user already exists"
-SVD = "Saved"
+ISBNNF = "ISBN не найден"
+ISBNNC = "ISBN содержит ошибку"
+IDNF = "ID не найден"
+IDNC = "ID содержит ошибку"
+STANF = "Станция не найдена"
+BNF = "Книга не найдена"
+EMNF = "Email не найден"
+EMNC = "Email содержит ошибку"
+NOTYOURS = "Эта книга не ваша!"
+NOTLOG = "Пожалуйста, выполните вход"
+NOTFILLED = "Вы заполнили не все поля"
+ALRHAS = "У вас уже есть эта книга"
+SUCCESS = "Успешно!"
+DBERR = "Ошибка базы данных. Проверьте подключение к интернету."
+IDISBNNC = "ID или ISBN содержит ошибку"
+ALREXS = "Эта книга уже есть в базе."
+ALREXSUSER = "Пользователь с этим email уже зарегистрирован."
+SVD = "Данные сохранены"
 firstEnter = True
 dataLoaded = False
 ranking = {10: "Student",
@@ -1149,11 +1147,11 @@ class Bookcrossing(MDApp):
 
         if bookOnStation(book_id, type="book_id"):
             actionButton = MDRaisedButton(
-                        text="Take this book",
+                        text="Взять книгу",
                         on_release=lambda x: take_book(book_id, user))
         else:
             actionButton = MDRaisedButton(
-                        text="Give this book",
+                        text="Сдать книгу",
                         on_release=lambda x:
                         App.get_running_app().show_station_text_dialog())
 
@@ -1183,10 +1181,10 @@ class Bookcrossing(MDApp):
                     book=App.get_running_app().current_book_id,
                     station=self.text_dialog.content_cls.text_field.text), .1))
 
-        cancelButton = MDFlatButton(text="CANCEL",
+        cancelButton = MDFlatButton(text="ОТМЕНА",
                                     on_release=self.close_station_text_dialog)
 
-        self.text_dialog = MDDialog(title="Station to use:",
+        self.text_dialog = MDDialog(title="Код станции:",
                                     type="custom",
                                     content_cls=TextDialogContent(),
                                     size_hint=(0.7, 0.4),

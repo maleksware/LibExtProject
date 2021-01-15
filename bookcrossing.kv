@@ -1,15 +1,11 @@
-# -*- coding: cp1251 -*-
+# -*- coding: utf8 -*-
 <TextDialogContent>
     text_field: text_field
     orientation: "vertical"
     size_hint_y: 0.8
     MDTextField:
         id: text_field
-        hint_text: "Station"
-
-
-
-
+        hint_text: "Станция"
 
 <Annot>
     name: "Annot"
@@ -58,7 +54,7 @@
                     GridLayout:
                         cols: 2
                         MDLabel:
-                            text: 'My Books'
+                            text: 'Мои книги'
                             size_hint: (0.1, None)
                             font_size: 30
                             halign:'center'
@@ -83,26 +79,26 @@
                 on_tab_press:
                     self.gt.clearInput()
                 name: 'GiveAndTake'
-                text: '�����'
+                text: 'Обмен'
                 icon: 'reload'
                 GiveAndTake:
                     id: gt
 
             MDBottomNavigationItem:
                 name: 'Add'
-                text: '��������'
+                text: 'Добавить'
                 icon: 'plus-circle'
                 Add
 
             MDBottomNavigationItem:
                 name: 'Search'
-                text: '�����'
+                text: 'Поиск'
                 icon: 'book-search'
                 Search
 
             MDBottomNavigationItem:
                 name: 'Set'
-                text: '���������'
+                text: 'Настройки'
                 icon: 'settings'
                 Set
 
@@ -155,41 +151,41 @@
     GridLayout:
         cols:1
         MDLabel:
-            text:"Add Book"
+            text:"Добавить книгу"
             size_hint:0.4,None
             font_size:30
             halign:'center'
         TextInput:
             id:isbn
-            hint_text: "Book ISBN"
+            hint_text: "ISBN книги"
             multiline: False
             size_hint: 1, 0.3
         TextInput:
             id:title
-            hint_text: "Book title"
+            hint_text: "Название"
             multiline: False
             size_hint: 1, 0.3
         TextInput:
             id:author
-            hint_text: "Author"
+            hint_text: "Автор"
             multiline: False
             size_hint: 1, 0.3
         TextInput:
             id:description
-            hint_text: "Short description"
+            hint_text: "Описание"
             multiline: False
         TextInput:
             id:tags
             multiline: False
-            hint_text: "Tags separated by spaces"
+            hint_text: "Теги, разделенные пробелами"
             size_hint: 1, 0.3
         TextInput:
             id:kod
-            hint_text: "Station code"
+            hint_text: "Код станции"
             multiline: False
             size_hint: 1, 0.3
         MDRaisedButton:
-            text: "Add this book to the list"
+            text: "Добавить книгу в базу"
             size_hint:0.4,1
             on_release: root.addBook(self.text)
 
@@ -204,7 +200,7 @@
         cols: 1
         rows: 3
         MDLabel:
-            text: "Search"
+            text: "Поиск книг"
             font_size: 30
             size_hint: (0.35, None)
             halign:'center'
@@ -216,11 +212,11 @@
                 id: searchTextInput
                 size_hint: (0.6, 0.6)
                 font_size: 14
-                hint_text: "What are you looking for?"
+                hint_text: "Что вы ищете?"
                 multiline: False
                 on_text_validate: root.search()
             MDRaisedButton:
-                text: "Ok"
+                text: "OK"
                 font_size: 20
                 size_hint: (0.1, 0.5)
                 pos_hint: {'center_y': 0.3}
@@ -244,47 +240,47 @@
         cols: 1
         spacing:3
         MDLabel:
-            text:'Settings'
+            text:'Настройки'
             font_size:35
             size_hint:(0.4,None)
             halign:'center'
         Button:
-            text:'Profile'
+            text:'Профиль'
             background_color: [0.9, 0.9, 0.9, 1]
             color: [0, 0, 0, 1]
             background_normal: ""
             size_hint:(0.4,None)
             on_press: root.manager.current = "Profile"
         Button:
-            text:'Message about problem'
+            text:'Сообщить о проблеме'
             background_color: [0.9, 0.9, 0.9, 1]
             color: [0, 0, 0, 1]
             background_normal: ""
             size_hint:(0.4,None)
             on_press:root.manager.current = 'AboutProblem'
         Button:
-            text:'Reference'
+            text:'Справка'
             background_color: [0.9, 0.9, 0.9, 1]
             color: [0, 0, 0, 1]
             background_normal: ""
             size_hint:(0.4,None)
             on_press:root.manager.current = 'Spravka'
         Button:
-            text:'About attachment'
+            text:'О приложении'
             background_color: [0.9, 0.9, 0.9, 1]
             color: [0, 0, 0, 1]
             background_normal: ""
             size_hint:(0.4,None)
             on_press:root.manager.current = 'AboutTheApp'
         Button:
-            text:'Information'
+            text:'Информация'
             background_color: [0.9, 0.9, 0.9, 1]
             color: [0, 0, 0, 1]
             background_normal: ""
             size_hint:(0.4,None)
             on_press:root.manager.current = 'Information'
         Button:
-            text:'About developers'
+            text:'О разработчиках'
             background_color: [0.9, 0.9, 0.9, 1]
             color: [0, 0, 0, 1]
             size_hint:(0.4,None)
@@ -312,7 +308,7 @@
 
         cols: 1
         MDLabel:
-            text: "Profile"
+            text: "Профиль"
             font_size: 35
             size_hint: 0.2, None
             halign:'center'
@@ -346,18 +342,18 @@
             size_hint: 0.4, None
             background_color: [255, 255, 255, 0]
             color: [0, 0, 0, 1]
-            text: "Edit profile"
+            text: "Редактировать профиль"
             on_press: root.editProfile()
         Button:
             size_hint: 0.4, None
-            text: "Delete profile"
+            text: "Удалить профиль"
             background_color: [255, 255, 255, 0]
             color: [0, 0, 0, 1]
 
             on_press: root.deleteProfile()
         Button:
             size_hint: 0.4, None
-            text: "Logout"
+            text: "Выйти"
             background_color: [255, 255, 255, 0]
             color: [0, 0, 0, 1]
 
@@ -375,7 +371,7 @@
     GridLayout:
         cols:1
         MDLabel:
-            text:'Update Profile'
+            text:'Обновить профиль'
             size_hint: 0.4,None
             font_size:35
             halign:'center'
@@ -434,7 +430,7 @@
     GridLayout:
         cols:1
         MDLabel:
-            text:'About the problem'
+            text:'Сообщить о проблеме'
             size_hint:0.4,None
             font_size:30
             halign:'center'
@@ -446,9 +442,9 @@
             id:feedback
             size_hint:0.4,None
             font_size:15
-            hint_text:'Descripe the problem'
+            hint_text:'Опишите проблему'
         MDRaisedButton:
-            text:'Send'
+            text:'Отправить'
             size_hint:0.4,None
             size:200,100
             on_press:
@@ -472,7 +468,7 @@
     GridLayout:
         cols:1
         MDLabel:
-            text:'Reference'
+            text:'Справка'
             size_hint:0.4,None
             font_size:30
             halign:'center'
@@ -495,7 +491,7 @@
     GridLayout:
         cols:1
         MDLabel:
-            text:'About Attachment'
+            text:'О приложении'
             size_hint:0.4,None
             font_size:30
             halign:'center'
@@ -521,13 +517,13 @@
 
         cols:1
         MDLabel:
-            text: 'Information'
+            text: 'Информация'
             size_hint: 0.4, None
             font_size: 30
             halign:'center'
         MDLabel:
             size_hint: 0.2, None
-            text: 'Last news:'
+            text: 'Последние новости:'
             halign: 'left'
             font_size: 20
         ScrollView:
@@ -543,7 +539,7 @@
             background_color: [0.95, 0.95, 0.95, 1]
             color: [0, 0, 0, 1]
             background_normal: ""
-            text: "Offer news"
+            text: "Предложить новость"
             on_press: root.offer()
             size_hint: 0.3, None
 
@@ -562,7 +558,7 @@
     GridLayout:
         cols:1
         MDLabel:
-            text:'About Developers'
+            text:'О разработчиках'
             size_hint:0.4,None
             font_size:30
             halign:'center'
@@ -587,9 +583,9 @@
         cols:1
         MDToolbar:
             id:bar
-            title: "Welcome to the Bookcrossing!"
+            title: "Добро пожаловать!"
             halign: 'center'
-            size_hint: 0.4, None
+            size_hint: 0.5, None
             md_bg_color: .2, .2, .2, 1
             spacing:65
             font_size: 50
@@ -600,7 +596,7 @@
         size: "350dp", "500dp"
         pos_hint: {"center_x": .5,"center_y": .5}
         MDLabel:
-            text: 'Sign in'
+            text: 'Вход'
             halign:'center'
             size_hint_y: None
             font_style: 'Subtitle1'
@@ -608,8 +604,8 @@
         MDSeparator:
             height: "1dp"
         MDLabel:
-            text: 'Write your email here'
-            size_hint: 0.8,None
+            text: 'Ваш email'
+            size_hint: 0.8, None
             pos_hint: {"center_x": .45}
         MDTextFieldRound:
             id: mail
@@ -621,7 +617,7 @@
             normal_color: 1, 1, 1, 1
             on_text_validate: root.switch(self.text)
         MDLabel:
-            size:(0,0)
+            size: (0,0)
             size_hint: None,None
         GridLayout:
             cols:2
@@ -630,13 +626,13 @@
             padding:40
             spacing:80
             MDRaisedButton:
-                text:'Sign in'
+                text:'Войти'
                 size_hint:None,0.1
                 md_bg_color:0,0,1,1
                 on_release:
                     root.switch(self.text)
             MDRaisedButton:
-                text:'Sign up'
+                text:'Регистрация'
                 size_hint:None,0.1
                 md_bg_color:0,0,0,1
                 pos_hint: {"center_x": 1,"center_y": .1}
@@ -671,7 +667,7 @@
     GridLayout:
         cols:1
         MDLabel:
-            text:'Sign up'
+            text:'Вход'
             size_hint: 0.4,None
             font_style:'H4'
             halign:'center'
@@ -684,17 +680,17 @@
             id:nam
             size_hint: 0.4,None
             font_size:25
-            hint_text:'Name'
+            hint_text:'Имя'
         MDTextField:
             id:familia
             size_hint: 0.4,None
             font_size:25
-            hint_text:'Familia'
+            hint_text:'Фамилия'
         MDTextField:
             id:class1
             size_hint: 0.4,None
             font_size:25
-            hint_text:'Class(Enter a number from 5-11)'
+            hint_text:'Класс (число, без буквы)'
         MDTextField:
             id:mail
             size_hint: 0.4,None
@@ -703,7 +699,7 @@
             icon_right:'email'
 
         MDRaisedButton:
-            text:'Sign up'
+            text:'Вход'
             on_release:
                 root.click(self.text)
             size_hint: 0.4,None
@@ -734,7 +730,7 @@
     GridLayout:
         cols:1
         MDLabel:
-            text:'Delete Profile'
+            text:'Удалить профиль'
             size_hint:0.4,None
             font_size:30
             halign:'center'
@@ -745,7 +741,7 @@
         orientation: 'vertical'
 
         MDLabel:
-            text: "When deleting the profile, make sure you have given\n all your books to a station. Otherwise, \nthe profile will not be deleted."
+            text: "При удалении профиля\nсдайте все книги на руках,\nиначе профиль не может быть удален."
             halign:'center'
         BoxLayout:
             orientation: "horizontal"
@@ -753,12 +749,12 @@
                 id:checkbox
                 size_hint: 0.3, 1
             MDLabel:
-                text: "I am sure I want to delete my profile."
+                text: "Я уверен, что хочу удалить профиль."
                 halign: "left"
 
 
         MDFlatButton:
-            text: "Delete this profile"
+            text: "Удалить профиль"
             on_press: root.delete()
 
 #Screen Manager
