@@ -1,4 +1,6 @@
 # -*- coding: utf8 -*-
+"""Установка кодировки."""
+
 
 # TODO: Remove Spaghetti Code
 # TODO: Settings content
@@ -11,13 +13,11 @@
 # TODO: Add Log files
 # TODO: Add documentation and docstrings
 # TODO: Rewrite execSQL calls
-# TODO: Русификация приложения
-# TODO: Добавить on_text_validate в MDDialog
-
 # Kivy imports
 
+import re
+
 import kivy
-from kivymd.app import MDApp
 from kivy.config import Config
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
@@ -26,13 +26,15 @@ from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.widget import Widget
 from kivy.clock import Clock
-from kivymd.uix.dialog import MDDialog
 from kivy.core.window import Window
+
+from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton, MDRaisedButton
-from kivymd.toast import toast
+from kivymd.app import MDApp
 from kivymd.uix.label import MDLabel
+from kivymd.toast import toast
+
 import pymysql
-import re
 # No imports after this line!
 
 
@@ -47,6 +49,7 @@ Window.size = (450, 800)
 
 # Functions
 def generateModalTextBook(book):
+    """Создание текста модальных окон книг."""
     owner = book[0]
     id = book[2]
     isbn = book[3]
@@ -72,10 +75,12 @@ def generateModalTextBook(book):
 
 
 def cwq(string):
+    """Обертывание строки кавычками."""
     return '"' + str(string) + '"'
 
 
 def execSQL(sql, one=True, debugOutput=False, args=[]):
+    """Выполнение SQL-запросов."""
     if args:
         for i in range(len(args)):
             args[i] = cwq(args[i])
@@ -106,6 +111,7 @@ def execSQL(sql, one=True, debugOutput=False, args=[]):
 
 
 def modalNews(id):
+    """Создание текста модальных окон новостей."""
     request = 'SELECT * FROM info WHERE id = ' + id
     news = execSQL(request)
     bookModal = MDDialog(title=news[0],
@@ -117,6 +123,7 @@ def modalNews(id):
 
 
 def processLongTitle(text, processTo):
+    """Обработка длинных строк."""
     if len(text) > processTo:
         return text[:processTo] + "..."
     else:
@@ -124,6 +131,7 @@ def processLongTitle(text, processTo):
 
 
 def hasThisBook(mail, book, reqType="book_id"):
+    """Определение, есть ли у пользователя книга."""
     book = str(book)
     if reqType == "book_id":
         request = 'SELECT * FROM books WHERE book_id = ' + cwq(book)
@@ -138,6 +146,7 @@ def hasThisBook(mail, book, reqType="book_id"):
 
 
 def isID(text):
+    """Проверка, является ли строка ID книги."""
     text = str(text)
     request = 'SELECT * FROM books WHERE book_id = ' + cwq(text)
     result = execSQL(request)
@@ -148,6 +157,7 @@ def isID(text):
 
 
 def isISBN(text):
+    """Проверка, является ли строка ISBN книги."""
     text = reduceISBN(text)
     if len(text) not in (10, 13):
         return False
@@ -156,12 +166,13 @@ def isISBN(text):
 
 
 def reduceISBN(isbn):
+    """Приведение ISBN к числовому виду для последующей проверки."""
     reducedISBN = "".join(isbn.split("-"))
     return reducedISBN
 
 
 def encodeTagsLine(tags):
-
+    """Превращение кортежа тегов в 1 строку."""
     tags = tags.split()
     newTags = []
     for i in tags:
@@ -180,10 +191,12 @@ def encodeTagsLine(tags):
 
 
 def decodeTagsLine(tags):
+    """Превращение строки тегов в 1 кортеж."""
     return tags.split("^")
 
 
 def showTags(tags):
+    """Визуальное отображение тегов."""
     tags = tags.split("^")
     toShow = []
     for tag in tags:
@@ -193,6 +206,7 @@ def showTags(tags):
 
 
 def my_books():
+    """Получение книг, принадлежащих пользователю."""
     mail = App.get_running_app().email
     request = 'SELECT * FROM books WHERE owner = ' + cwq(mail)
     result = None
@@ -206,6 +220,7 @@ def my_books():
 
 
 def modalview(b_id):
+    """Получение информации для отображения на модальном окне книги."""
     request = 'SELECT * FROM books WHERE book_id = ' + cwq(str(b_id))
     result = None
     try:
@@ -216,15 +231,18 @@ def modalview(b_id):
 
 
 def modal():
+    """Функция-ссылка: см.App.get_running_app().show_book_dialog()."""
     App.get_running_app().show_book_dialog()
 
 
 def f_btn_book(self, a_id):
+    """Функция-ссылка: см. modal()."""
     App.get_running_app().current_book_id = a_id
     modal()
 
 
 def bookSearch(request):
+    """Поиск книги по введенным данным."""
     bookList = execSQL('SELECT * FROM books', one=False)
 
     results = []
@@ -243,16 +261,19 @@ def bookSearch(request):
 
 
 def splitISBN(isbn):
+    """Приведение ISBN в числовой вид."""
     isbn = list(isbn.split("-"))
     isbn = list("".join(isbn).strip())
     return "".join(isbn)
 
 
 def divideToCheck(isbn):
+    """Деление ISBN на значимую и контрольную части."""
     return (isbn[:-1], isbn[-1])
 
 
 def checkISBN(isbn, checkDigit):
+    """Проверка ISBN на соответствие правилам."""
     try:
         sum = 0
         ######################################
@@ -286,11 +307,13 @@ def checkISBN(isbn, checkDigit):
 
 
 def isValid(isbn):
+    """Выполняет все операции с ISBN от сырой строки до проверки."""
     isbn = splitISBN(isbn)
     return checkISBN(divideToCheck(isbn)[0], checkDigit=divideToCheck(isbn)[1])
 
 
 def isValidEmail(email):
+    """Проверяет email на следование правилам. Будет заменена re.match()."""
     def isValidHost(host):
         if "." not in host:
             return False
@@ -333,12 +356,14 @@ def isValidEmail(email):
 
 
 def upgradeRank(rank, count=1):
+    """Увеличивает ранг пользователя на count."""
     rank = int(rank)
     rank += count
     return str(rank)
 
 
 def getNameAndSurname(email):
+    """Возвращает имя и фамилию пользователя по email."""
     name, surname = tuple(execSQL("SELECT name, surname "
                                   "FROM users WHERE email = "
                                   + cwq(email)))
@@ -346,7 +371,7 @@ def getNameAndSurname(email):
 
 
 def give_book(book, station, type="book_id", show_station_dialog=False):
-    print("giving")
+    """Сдача книги на станцию."""
     if App.get_running_app().dialog:
         App.get_running_app().close_dlg("instance")
 
@@ -377,6 +402,7 @@ def give_book(book, station, type="book_id", show_station_dialog=False):
 
 
 def take_book(book, user, type="book_id"):
+    """Взятие книги пользователем."""
     if App.get_running_app().dialog:
         App.get_running_app().close_dlg("instance")
 
@@ -403,6 +429,7 @@ def take_book(book, user, type="book_id"):
 
 
 def bookOnStation(book, type="isbn"):
+    """Проверка того, лежит ли книга на станции."""
     try:
         if type == "auto":
             if isISBN(book):
@@ -426,10 +453,14 @@ def bookOnStation(book, type="isbn"):
 
 # Classes of the screens
 class Annot(Screen):
+    """Первый загрузочный экран."""
+
     def on_enter(self):
+        """Выполняет загрузку данных."""
         Clock.schedule_once(self.load)
 
     def load(self, dt):
+        """Выполняет загрузку данных."""
         global dataLoaded
         if not dataLoaded:
             print("data loading...")
@@ -441,26 +472,35 @@ class Annot(Screen):
 
 
 class Loading(Screen):
+    """Второй загрузочный экран."""
+
     def toLogin(self):
+        """Выполняет преход на другой экран."""
         App.get_running_app().screenStack = []
         print("toLogin")
         self.manager.current = "Login"
 
 
 class Login(Screen):
+    """Экран входа."""
+
     def clearEmail(self):
+        """Выполняет очистку поля email."""
         App.get_running_app().email = None
 
     def stack(self):
+        """Стандартный метод добавления экрана в стек."""
         App.get_running_app().screenStack.append("Login")
 
     def checkToLoading(self):
+        """Выполняет проверку перехода на другой экран."""
         global firstEnter
         if firstEnter:
             firstEnter = False
             self.manager.current = "Loading"
 
     def switch(self, btn):
+        """Выполняет переход на экран MyBooks."""
         App.get_running_app().email = self.mail.text
         request = 'SELECT * FROM users WHERE email = ' + cwq(self.mail.text)
         m_record = execSQL(request)
@@ -474,11 +514,8 @@ class Login(Screen):
                 self.defineRank()
                 self.manager.current = 'MyBooks'
 
-    def login(self):
-        global user
-        user.login()
-
     def defineRank(self):
+        """Выполняет определение ранга пользователя."""
         mail = cwq(self.mail.text)
         user = execSQL('SELECT * FROM users WHERE email = ' + mail)
         App.get_running_app().rank = user[-1]
@@ -486,13 +523,18 @@ class Login(Screen):
 
 
 class MyBooks(Screen):
+    """Главный экран с BottomNavigation."""
+
     def stack(self):
+        """Стандартный метод добавления экрана в стек."""
         App.get_running_app().screenStack.append("MyBooks")
 
     def __init__(self, **kwargs):
+        """Стандартный метод инициализации объекта класса Screen."""
         super(MyBooks, self).__init__(**kwargs)
 
     def my_book(self, btn):
+        """Отображение книг на экране."""
         self.bookLayout.clear_widgets()
         self.bookLayout.bind(minimum_height=self.bookLayout.setter('height'))
         try:
@@ -529,174 +571,11 @@ class MyBooks(Screen):
             print("AN EXCEPTION OCCURRED", e)
 
 
-class GiveAndTake(Screen):
-    def clearInput(self):
-        self.code.text = ""
-        self.isbn.text = ""
-
-    def stack(self):
-        App.get_running_app().screenStack.append("GiveAndTake")
-
-    def give(self):
-        book = self.isbn.text
-        station = self.code.text
-        try:
-            if station == "":
-                self.test_take()
-                return
-
-            isbn_ok = isValid(book)
-            mail = App.get_running_app().email
-            if isISBN(book):
-                if isbn_ok:
-                    book = reduceISBN(book)
-                    request = 'SELECT * FROM books WHERE isbn = ' + cwq(book)
-                    result = execSQL(request)
-                    if result is None:
-                        App.get_running_app().show_dialog(BNF)
-                        return
-                    elif result[0] != mail:
-                        App.get_running_app().show_dialog(NOTYOURS)
-                        return
-                    else:
-                        request = 'SELECT * FROM stations WHERE id = ' + \
-                                   cwq(station)
-                        dataStation = execSQL(request, one=False)
-
-                        if dataStation == ():
-                            App.get_running_app().show_dialog(STANF)
-                            self.code.text = ""
-                            return
-                        execSQL('UPDATE books SET owner = "None" '
-                                + 'WHERE isbn = ' + cwq(book))
-                        execSQL('UPDATE books SET station = ' + cwq(station)
-                                + ' WHERE isbn = ' + cwq(book))
-                        self.clearInput()
-
-                        toast(SUCCESS)
-                        return
-                else:
-                    App.get_running_app().show_dialog(ISBNNC)
-                    return
-            elif isID(book):
-                c_record = execSQL('SELECT * FROM books WHERE book_id = '
-                                   + cwq(book))
-                if c_record is None:
-                    App.get_running_app().show_dialog(BNF)
-                    return
-                elif c_record[0] != mail:
-                    App.get_running_app().show_dialog(NOTYOURS)
-                    return
-                else:
-                    dataStation = execSQL('SELECT * FROM stations WHERE id ='
-                                          + cwq(station), one=False)
-
-                    if dataStation == ():
-                        App.get_running_app().show_dialog(STANF)
-                        self.code.text = ""
-                        return
-                    execSQL('UPDATE books SET owner = "None" WHERE book_id ='
-                            + cwq(str(book)))
-                    execSQL('UPDATE books SET station = ' + cwq(station)
-                            + ' WHERE book_id = ' + cwq(book))
-                    self.clearInput()
-                    toast(SUCCESS)
-                    return
-            else:
-                App.get_running_app().show_dialog(IDISBNNC)
-                return
-
-        except AttributeError:
-            self.manager.current = 'Login'
-            App.get_running_app().show_dialog(NOTLOG)
-            return
-        except IndexError:
-            App.get_running_app().show_dialog(NOTFILLED)
-            return
-        except UnboundLocalError:
-            return
-
-    def take(self):
-        book = self.isbn.text
-        if book == "":
-            toast(NOTFILLED)
-        try:
-            if isISBN(book):
-                if isValid(book):
-                    mail = App.get_running_app().email
-                    result = execSQL('SELECT * FROM books WHERE isbn = '
-                                     + cwq(book))
-                    if result is None:
-                        App.get_running_app().show_dialog(BNF)
-                    else:
-                        try:
-                            if result[0] == "None":
-                                execSQL('UPDATE books SET owner = '
-                                        + cwq(mail) + ' WHERE isbn = '
-                                        + cwq(str(book)))
-                                execSQL('UPDATE books SET station = '
-                                        + "The book was taken" 'WHERE isbn = '
-                                        + cwq(str(book)))
-                                self.clearInput()
-                                toast(SUCCESS)
-                                return
-                            elif not hasThisBook(mail, book, reqType="isbn"):
-                                App.get_running_app().show_dialog(NOTYOURS)
-                                return
-                            else:
-                                App.get_running_app().show_dialog(ALRHAS)
-                        except pymysql.Error as err:
-                            App.get_running_app().show_dialog(DBERR)
-                            print(err)
-
-                else:
-                    App.get_running_app().show_dialog(ISBNNC)
-                    return
-            elif isID(book):
-                mail = App.get_running_app().email
-                result = execSQL('SELECT * FROM books WHERE book_id = '
-                                 + cwq(str(book)))
-                if result is None:
-                    App.get_running_app().show_dialog(BNF)
-                else:
-                    try:
-                        if result[0] == "None":
-
-                            execSQL('UPDATE books SET owner = ' + cwq(mail)
-                                    + ' WHERE book_id = ' + cwq(book))
-                            execSQL('UPDATE books SET station = '
-                                    + '"The book was taken "'
-                                    + 'WHERE book_id = '
-                                    + cwq(str(book)))
-                            self.isbn.text = ''
-                            toast(SUCCESS)
-                            return
-                        elif not hasThisBook(mail, book, reqType="book_id"):
-                            App.get_running_app().show_dialog(NOTYOURS)
-                        else:
-                            App.get_running_app().show_dialog(ALRHAS)
-                    except pymysql.Error as err:
-                        App.get_running_app().show_dialog(DBERR)
-                        print(err)
-
-            else:
-                App.get_running_app().show_dialog(IDISBNNC)
-        except AttributeError:
-            self.manager.current = 'Login'
-            App.get_running_app().show_dialog(NOTLOG)
-        except IndexError:
-            App.get_running_app().show_dialog(NOTFILLED)
-        except UnboundLocalError:
-            return
-
-    def test_take(self):
-        book = self.isbn.text
-        take_book(book, App.get_running_app().email, type="isbn")
-        print("took")
-
-
 class Add(Screen):
+    """Экран добавления книг в БД."""
+
     def clearInput(self):
+        """Очистка всех полей."""
         self.isbn.text = ''
         self.kod.text = ''
         self.title.text = ''
@@ -705,9 +584,11 @@ class Add(Screen):
         self.tags.text = ''
 
     def stack(self):
+        """Стандартный метод добавления экрана в стек."""
         App.get_running_app().screenStack.append("Add")
 
     def addBook(self, g):
+        """Добавление книги в БД."""
         try:
             isbn_ok = isValid(self.isbn.text)
             mail = App.get_running_app().email
@@ -768,17 +649,23 @@ class Add(Screen):
 
 
 class Search(Screen):
+    """Экран поиска книг."""
+
     def back(self):
+        """Стандартный метод возвращения на предыдущий экран."""
         del App.get_running_app().screenStack[-1]
         self.manager.current = App.get_running_app().screenStack[-1]
 
     def stack(self):
+        """Стандартный метод добавления экрана в стек."""
         App.get_running_app().screenStack.append("Search")
 
     def __init__(self, **kwargs):
+        """Стандартный метод инициализации объекта класса Screen."""
         super(Search, self).__init__(**kwargs)
 
     def search(self):
+        """Отображение результатов поиска."""
         try:
             h = 'height'
             self.bookLayout.bind(minimum_height=self.bookLayout.setter(h))
@@ -818,23 +705,32 @@ class Search(Screen):
 
 
 class Set(Screen):
+    """Экран настроек."""
+
     def back(self):
+        """Стандартный метод возвращения на предыдущий экран."""
         del App.get_running_app().screenStack[-1]
         self.manager.current = App.get_running_app().screenStack[-1]
 
     def stack(self):
+        """Стандартный метод добавления экрана в стек."""
         App.get_running_app().screenStack.append("Set")
 
 
 class SignUp(Screen):
+    """Экран регистрации."""
+
     def back(self):
+        """Стандартный метод возвращения на предыдущий экран."""
         del App.get_running_app().screenStack[-1]
         self.manager.current = App.get_running_app().screenStack[-1]
 
     def stack(self):
+        """Стандартный метод добавления экрана в стек."""
         App.get_running_app().screenStack.append("SignUp")
 
     def click(self, btn):
+        """Регистрайия пользователя."""
         App.get_running_app().email = self.mail.text
         strPattern = '(^|\\s)[-a-z0-9_.]+@([-a-z0-9]+\\.)+[a-z]{2,6}(\\s|$)'
         pattern = re.compile(strPattern)
@@ -871,35 +767,43 @@ class SignUp(Screen):
 
 
 class Profile(Screen):
+    """Экран профиля пользователя."""
+
     def back(self):
+        """Стандартный метод возвращения на предыдущий экран."""
         del App.get_running_app().screenStack[-1]
         self.manager.current = App.get_running_app().screenStack[-1]
 
     def stack(self):
+        """Стандартный метод добавления экрана в стек."""
         if App.get_running_app().screenStack[-1] != "Profile":
             App.get_running_app().screenStack.append("Profile")
 
     def editProfile(self):
+        """Обновление профиля."""
         self.manager.current = "UpdateProfile"
 
     def deleteProfile(self):
+        """Удаление профиля."""
         self.manager.current = "DeleteProfile"
 
     def logout(self):
+        """Выход из учетной записи."""
         App.get_running_app().email = None
         self.manager.current = "Login"
 
-    def getRank(self):
-        pass
-
     def initProfile(self):
+        """Инициализация надписей."""
         pair = getNameAndSurname(App.get_running_app().email)
         self.nameLabel.text = pair[0]
         self.surnameLabel.text = pair[1]
 
 
 class UpdateProfile(Screen):
+    """Экран обновления профиля пользователя."""
+
     def prepareInputs(self):
+        """Заполняет поля нужными данными."""
         user = App.get_running_app().email
         self.mail.text = user
         result = execSQL('SELECT * FROM users WHERE email = ' + cwq(user))
@@ -908,13 +812,16 @@ class UpdateProfile(Screen):
         self.class1.text = result[2]
 
     def back(self):
+        """Стандартный метод возвращения на предыдущий экран."""
         del App.get_running_app().screenStack[-1]
         self.manager.current = App.get_running_app().screenStack[-1]
 
     def stack(self):
+        """Стандартный метод добавления экрана в стек."""
         App.get_running_app().screenStack.append("UpdateProfile")
 
     def click1(self, btn):
+        """Метод обновления данных в БД."""
         App.get_running_app().email = self.mail.text
         email_ok = isValidEmail(self.mail.text)
         m_record = execSQL('SELECT * FROM users WHERE email = '
@@ -945,14 +852,19 @@ class UpdateProfile(Screen):
 
 
 class AboutProblem(Screen):
+    """Экран отправки отзывов."""
+
     def back(self):
+        """Стандартный метод возвращения на предыдущий экран."""
         del App.get_running_app().screenStack[-1]
         self.manager.current = App.get_running_app().screenStack[-1]
 
     def stack(self):
+        """Стандартный метод добавления экрана в стек."""
         App.get_running_app().screenStack.append("AboutProblem")
 
     def ClickOk(self, btn):
+        """Добавляет отзыв в БД."""
         try:
             mail = App.get_running_app().email
             if not self.feedback.text:
@@ -975,32 +887,45 @@ class AboutProblem(Screen):
 
 
 class Spravka(Screen):
+    """Справка о приложении."""
+
     def back(self):
+        """Стандартный метод возвращения на предыдущий экран."""
         del App.get_running_app().screenStack[-1]
         self.manager.current = App.get_running_app().screenStack[-1]
 
     def stack(self):
+        """Стандартный метод добавления экрана в стек."""
         App.get_running_app().screenStack.append("Spravka")
 
 
 class AboutTheApp(Screen):
+    """Экран с информацией о приложении."""
+
     def back(self):
+        """Стандартный метод возвращения на предыдущий экран."""
         del App.get_running_app().screenStack[-1]
         self.manager.current = App.get_running_app().screenStack[-1]
 
     def stack(self):
+        """Стандартный метод добавления экрана в стек."""
         App.get_running_app().screenStack.append("AboutTheApp")
 
 
 class Information(Screen):
+    """Экран с новостями."""
+
     def back(self):
+        """Стандартный метод возвращения на предыдущий экран."""
         del App.get_running_app().screenStack[-1]
         self.manager.current = App.get_running_app().screenStack[-1]
 
     def stack(self):
+        """Стандартный метод добавления экрана в стек."""
         App.get_running_app().screenStack.append("Information")
 
     def showNews(self):
+        """Отображение новостей на экране."""
         self.newsLayout.clear_widgets()
         news = execSQL('SELECT * FROM info', one=False)
         self.newsLayout.bind(minimum_height=self.newsLayout.setter('height'))
@@ -1015,6 +940,7 @@ class Information(Screen):
             self.newsLayout.add_widget(Btn)
 
     def offer(self):
+        """Указывает контакты для обращения."""
         App.get_running_app().show_dialog(text="""Чтобы предложить новость,
                                                   свяжитесь с нами по почте
                                                   makegym1505v2.0@gmail.com""",
@@ -1022,24 +948,33 @@ class Information(Screen):
 
 
 class AboutDevelopers(Screen):
+    """Экран о разработчиках."""
+
     def back(self):
+        """Стандартный метод возвращения на предыдущий экран."""
         del App.get_running_app().screenStack[-1]
         self.manager.current = App.get_running_app().screenStack[-1]
 
     def stack(self):
+        """Стандартный метод добавления экрана в стек."""
         App.get_running_app().screenStack.append("AboutDevelopers")
 
 
 class DeleteProfile(Screen):
+    """Экран удаления профиля."""
+
     def back(self):
+        """Стандартный метод возвращения на предыдущий экран."""
         del App.get_running_app().screenStack[-1]
         self.manager.current = App.get_running_app().screenStack[-1]
 
     def stack(self):
+        """Стандартный метод добавления экрана в стек."""
         if App.get_running_app().screenStack[-1] != "DeleteProfile":
             App.get_running_app().screenStack.append("DeleteProfile")
 
     def delete(self):
+        """Стандартный метод возвращения на предыдущий экран."""
         if self.checkbox.active:
             try:
                 userEmail = App.get_running_app().email
@@ -1059,31 +994,15 @@ class DeleteProfile(Screen):
 
 # Widget and layout classes
 class TextDialogContent(BoxLayout):
+    """Пустой класс, вся информация в .kv файле."""
+
     pass
 
 
 class CustomAppException(Exception):
+    """Исключение."""
+
     pass
-
-
-class User():
-    def __init__(self):
-        pass
-
-    def take_book(self):
-        pass
-
-    def give_book(self):
-        pass
-
-    def login(self):
-        pass
-
-    def logout(self):
-        pass
-
-    def getNameAndSurname(self):
-        pass
 # No widget and layout classes after this line!
 
 
@@ -1113,30 +1032,36 @@ ranking = {10: "Student",
            100: "Booklover",
            200: "Top Reader",
            500: "Writer"}
-user = User()
 
 
 # No global vars after this line!
 # The Screenmanager
 # DO NOT MODIFY
 class Screens(ScreenManager):
+    """Главный менеджер экранов."""
+
     email = ''
 
     def __init__(self, **kwargs):
+        """Инициализация."""
         super(Screens, self).__init__(**kwargs)
 
     def build(self):
+        """Создание менеджера экранов."""
         sm = ScreenManager()
         App.get_running_app().sm = sm
 # The App class
 
 
 class Bookcrossing(MDApp):
+    """Основной класс приложения."""
+
     current_book_id = ""
     text_dialog = None
     dialog = None
 
     def show_book_dialog(self):
+        """Открытие модальных окон книг."""
         user = App.get_running_app().email
         book_id = App.get_running_app().current_book_id
         if book_id == "" or book_id is None:
@@ -1165,6 +1090,7 @@ class Bookcrossing(MDApp):
         self.dialog.open()
 
     def show_dialog(self, text, size=0.5):
+        """Открытие модальных окон."""
         self.dialog = MDDialog(
             title=text,
             buttons=[MDFlatButton(text="OK",
@@ -1174,6 +1100,7 @@ class Bookcrossing(MDApp):
         self.dialog.open()
 
     def show_station_text_dialog(self):
+        """Открытие модальных окон станции."""
         OKButton = MDRaisedButton(
             text="OK",
             on_release=lambda x: Clock.schedule_once(
@@ -1192,18 +1119,22 @@ class Bookcrossing(MDApp):
         self.text_dialog.open()
 
     def close_dlg(self, instance):
+        """Закрытие модальных окон."""
         if self.dialog:
             self.dialog.dismiss()
 
     def close_station_text_dialog(self, instance):
+        """Закрытие модальных окон."""
         if self.text_dialog:
             self.text_dialog.dismiss()
 
     def build(self):
+        """Создание App."""
         self.m = Screens(transition=NoTransition())
         return self.m
 
     def toApp(self, dt):
+        """Домашний экран."""
         self.m.current = "MyBooks"
 
 

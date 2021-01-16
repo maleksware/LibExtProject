@@ -1,4 +1,5 @@
 # -*- coding: utf8 -*-
+#:import Clock kivy.clock.Clock
 <TextDialogContent>
     text_field: text_field
     orientation: "vertical"
@@ -75,16 +76,6 @@
 
 
             MDBottomNavigationItem:
-                gt: gt
-                on_tab_press:
-                    self.gt.clearInput()
-                name: 'GiveAndTake'
-                text: 'Обмен'
-                icon: 'reload'
-                GiveAndTake:
-                    id: gt
-
-            MDBottomNavigationItem:
                 name: 'Add'
                 text: 'Добавить'
                 icon: 'plus-circle'
@@ -101,42 +92,6 @@
                 text: 'Настройки'
                 icon: 'settings'
                 Set
-
-
-<GiveAndTake>
-    on_enter:
-        root.clearInput()
-        root.stack()
-    name: "GiveAndTake"
-    isbn:isbn
-    code:code
-    GridLayout:
-        cols:1
-        spacing:3
-        MDLabel:
-            text: "Give and take"
-            size_hint: 1, None
-            font_size:30
-            halign:'center'
-        MDLabel:
-            text: "If you want to take the book, \nleave the 'Station' section blank"
-            size_hint: 1, None
-            halign:'center'
-        MDTextField:
-            id: isbn
-            hint_text: "ISBN or ID"
-            multiline: False
-            size_hint: 1, None
-        MDTextField:
-            id: code
-            hint_text: "Station"
-            size_hint: 1, None
-            multiline: False
-        MDRoundFlatButton:
-            text:'Ready'
-            size_hint: 1, None
-            on_release: root.give()
-
 
 <Add>
     on_enter:
@@ -766,7 +721,6 @@
         name: "Login"
     MyBooks:
         name: "MyBooks"
-    GiveAndTake:
     Add:
     Search:
     Set:
