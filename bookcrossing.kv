@@ -91,7 +91,57 @@
                 name: 'Set'
                 text: 'Настройки'
                 icon: 'settings'
-                Set
+                name: "Set"
+                GridLayout:
+                    cols: 1
+                    spacing:3
+                    MDLabel:
+                        text:'Настройки'
+                        font_size:35
+                        size_hint:(0.4,None)
+                        halign:'center'
+                    Button:
+                        text:'Профиль'
+                        background_color: [0.9, 0.9, 0.9, 1]
+                        color: [0, 0, 0, 1]
+                        background_normal: ""
+                        size_hint:(0.4,None)
+                        on_press: root.manager.current = "Profile"
+                    Button:
+                        text:'Сообщить о проблеме'
+                        background_color: [0.9, 0.9, 0.9, 1]
+                        color: [0, 0, 0, 1]
+                        background_normal: ""
+                        size_hint:(0.4,None)
+                        on_press:root.manager.current = 'AboutProblem'
+                    Button:
+                        text:'Справка'
+                        background_color: [0.9, 0.9, 0.9, 1]
+                        color: [0, 0, 0, 1]
+                        background_normal: ""
+                        size_hint:(0.4,None)
+                        on_press:root.manager.current = 'Spravka'
+                    Button:
+                        text:'О приложении'
+                        background_color: [0.9, 0.9, 0.9, 1]
+                        color: [0, 0, 0, 1]
+                        background_normal: ""
+                        size_hint:(0.4,None)
+                        on_press:root.manager.current = 'AboutTheApp'
+                    Button:
+                        text:'Информация'
+                        background_color: [0.9, 0.9, 0.9, 1]
+                        color: [0, 0, 0, 1]
+                        background_normal: ""
+                        size_hint:(0.4,None)
+                        on_press:root.manager.current = 'Information'
+                    Button:
+                        text:'О разработчиках'
+                        background_color: [0.9, 0.9, 0.9, 1]
+                        color: [0, 0, 0, 1]
+                        size_hint:(0.4,None)
+                        background_normal: ""
+                        on_press:root.manager.current = 'AboutDevelopers'
 
 <Add>
     on_enter:
@@ -186,61 +236,6 @@
                 row_default_height: 30
                 size_hint_y: None
                 Widget:
-
-<Set>
-    on_enter:
-        root.stack()
-    name: "Set"
-    GridLayout:
-        cols: 1
-        spacing:3
-        MDLabel:
-            text:'Настройки'
-            font_size:35
-            size_hint:(0.4,None)
-            halign:'center'
-        Button:
-            text:'Профиль'
-            background_color: [0.9, 0.9, 0.9, 1]
-            color: [0, 0, 0, 1]
-            background_normal: ""
-            size_hint:(0.4,None)
-            on_press: root.manager.current = "Profile"
-        Button:
-            text:'Сообщить о проблеме'
-            background_color: [0.9, 0.9, 0.9, 1]
-            color: [0, 0, 0, 1]
-            background_normal: ""
-            size_hint:(0.4,None)
-            on_press:root.manager.current = 'AboutProblem'
-        Button:
-            text:'Справка'
-            background_color: [0.9, 0.9, 0.9, 1]
-            color: [0, 0, 0, 1]
-            background_normal: ""
-            size_hint:(0.4,None)
-            on_press:root.manager.current = 'Spravka'
-        Button:
-            text:'О приложении'
-            background_color: [0.9, 0.9, 0.9, 1]
-            color: [0, 0, 0, 1]
-            background_normal: ""
-            size_hint:(0.4,None)
-            on_press:root.manager.current = 'AboutTheApp'
-        Button:
-            text:'Информация'
-            background_color: [0.9, 0.9, 0.9, 1]
-            color: [0, 0, 0, 1]
-            background_normal: ""
-            size_hint:(0.4,None)
-            on_press:root.manager.current = 'Information'
-        Button:
-            text:'О разработчиках'
-            background_color: [0.9, 0.9, 0.9, 1]
-            color: [0, 0, 0, 1]
-            size_hint:(0.4,None)
-            background_normal: ""
-            on_press:root.manager.current = 'AboutDevelopers'
 
 
 <Profile>

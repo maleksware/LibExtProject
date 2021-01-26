@@ -8,7 +8,6 @@
 # TODO: Add ranks for users
 # TODO: Recreate MyBooks and Search structure
 # TODO: Interface Update
-# TODO: Add User and ISBN class support
 # TODO: Backticks in execSQL function calls
 # TODO: Add Log files
 # TODO: Add documentation and docstrings
