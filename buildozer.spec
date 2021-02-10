@@ -13,10 +13,10 @@ package.domain = com.codinghurricane
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = db
+source.include_exts =
 
 # (list) Source files to exclude (let empty to not exclude anything)
-#source.exclude_exts = spec
+#source.exclude_exts = spec,db
 
 # (list) List of directory to exclude (let empty to not exclude anything)
 #source.exclude_dirs = tests, bin
